@@ -1,0 +1,77 @@
+# Unity generated folders
+Library/
+Temp/
+Obj/
+obj/
+Build/
+Builds/
+build/
+Logs/
+UserSettings/
+MemoryCaptures/
+Recordings/
+
+# Asset store tools
+Assets/AssetStoreTools*
+
+# Auto-generated IDE files
+.vs/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# JetBrains Rider / IntelliJ
+.idea/
+*.sln.iml
+*.DotSettings
+
+# Visual Studio configuration
+.vsconfig
+
+# Mono and JetBrains Rider
+.mono/
+
+# Gradle cache (Android builds)
+.gradle/
+gradle-app.setting
+local.properties
+
+# Android Studio generated files
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Unity generated crash reports
+sysinfo.txt
+*.stacktrace
+
+# Unity profiler data
+*.psess
+*.vsp
+*.vspx
+*.sap
+*.profiler
+
+# Generated builds and packages
+*.apk
+*.aab
+*.unitypackage
+*.bundle
+*.app
+*.ipa
+
+# Operating system metadata
+.DS_Store
+Thumbs.db
+ehthumbs.db

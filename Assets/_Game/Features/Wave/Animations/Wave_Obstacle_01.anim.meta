@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 729254835015041028fa38829a267fd7
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124955
+  packageName: '[Hyper-Casual Game] Wave'
+  packageVersion: 1.22
+  assetPath: Assets/Wave/Animations/Wave_Obstacle_01.anim
+  uploadId: 668832

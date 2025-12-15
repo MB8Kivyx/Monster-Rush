@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: a3900a8e781644e2aa3f0a4148f12630
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124955
+  packageName: '[Hyper-Casual Game] Wave'
+  packageVersion: 1.22
+  assetPath: Assets/Wave/Scripts/Player.cs
+  uploadId: 668832

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 6a0eef250bf7d41c3a7d36d211876c92
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124955
+  packageName: '[Hyper-Casual Game] Wave'
+  packageVersion: 1.22
+  assetPath: Assets/Wave/Scripts/FollowPlayer.cs
+  uploadId: 668832

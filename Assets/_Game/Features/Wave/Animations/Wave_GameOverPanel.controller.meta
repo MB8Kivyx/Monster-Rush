@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: af41e71fe689146cd83321c9471e477d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124955
+  packageName: '[Hyper-Casual Game] Wave'
+  packageVersion: 1.22
+  assetPath: Assets/Wave/Animations/Wave_GameOverPanel.controller
+  uploadId: 668832

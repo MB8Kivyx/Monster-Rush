@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 19b5fae12bcd043319072eebe8677a90
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124955
+  packageName: '[Hyper-Casual Game] Wave'
+  packageVersion: 1.22
+  assetPath: Assets/Wave/Scripts/BackgroundColorManager.cs
+  uploadId: 668832

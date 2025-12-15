@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 99ce38f96b74542399d491311321e831
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124955
+  packageName: '[Hyper-Casual Game] Wave'
+  packageVersion: 1.22
+  assetPath: Assets/Wave/Etc/Wave_WhiteObstacle.physicsMaterial2D
+  uploadId: 668832

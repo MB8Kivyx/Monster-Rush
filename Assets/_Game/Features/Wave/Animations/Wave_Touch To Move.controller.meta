@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1162b9c7e9be140339db5b73dd413dbd
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124955
+  packageName: '[Hyper-Casual Game] Wave'
+  packageVersion: 1.22
+  assetPath: Assets/Wave/Animations/Wave_Touch To Move.controller
+  uploadId: 668832

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f451816757df94e5e91398ed812e87f3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124955
+  packageName: '[Hyper-Casual Game] Wave'
+  packageVersion: 1.22
+  assetPath: Assets/Wave/Prefabs/Wave_Obstacles/Normal/Normal_Obstacle_22.prefab
+  uploadId: 668832

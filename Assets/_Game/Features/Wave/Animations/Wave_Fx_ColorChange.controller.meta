@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 30e07cf1b81ce4dfca171a34d4e2b417
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124955
+  packageName: '[Hyper-Casual Game] Wave'
+  packageVersion: 1.22
+  assetPath: Assets/Wave/Animations/Wave_Fx_ColorChange.controller
+  uploadId: 668832

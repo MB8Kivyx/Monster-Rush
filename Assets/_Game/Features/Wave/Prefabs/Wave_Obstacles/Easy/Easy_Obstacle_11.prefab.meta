@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6d39d677fc800488b86093f4db77839d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124955
+  packageName: '[Hyper-Casual Game] Wave'
+  packageVersion: 1.22
+  assetPath: Assets/Wave/Prefabs/Wave_Obstacles/Easy/Easy_Obstacle_11.prefab
+  uploadId: 668832
