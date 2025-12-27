@@ -27,6 +27,9 @@ public class ObstacleMovement : MonoBehaviour
     [SerializeField] private float upDownMoveDistance;
     [SerializeField] private float upDownMoveSpeed;
     
+    [Space(10)]
+    [SerializeField] private float fallSpeed = 0f; // Downward speed (units per second). Positive values move the obstacle down (decreasing y over time)
+    
     private float scaleAngleX = 0;
     private float scaleAngleY = 0;
     
@@ -64,6 +67,11 @@ public class ObstacleMovement : MonoBehaviour
         {
             MoveUpDown();
         }
+
+        if (fallSpeed != 0f)
+        {
+            ApplyFall();
+        }
     }
 
     // Changes the scale of the obstacle over time
@@ -83,7 +91,7 @@ public class ObstacleMovement : MonoBehaviour
     // Moves the obstacle side-to-side over time
     private void MoveSideToSide()
     {
-        Vector2 pos = transform.position;
+        Vector3 pos = transform.position;
         pos.x = originalPosition.x + Mathf.Sin(angleForSideMove) * sideMoveDistance;
         transform.position = pos;
 
@@ -93,11 +101,19 @@ public class ObstacleMovement : MonoBehaviour
     // Moves the obstacle up and down over time
     private void MoveUpDown()
     {
-        Vector2 pos = transform.position;
+        Vector3 pos = transform.position;
         pos.y = originalPosition.y + Mathf.Sin(angleForUpDownMove) * upDownMoveDistance;
         transform.position = pos;
 
         angleForUpDownMove += Time.deltaTime * upDownMoveSpeed;
+    }
+
+    // Applies a constant downward movement to the obstacle. This keeps any x oscillation intact.
+    private void ApplyFall()
+    {
+        Vector3 pos = transform.position;
+        pos.y -= fallSpeed * Time.deltaTime;
+        transform.position = pos;
     }
 
 

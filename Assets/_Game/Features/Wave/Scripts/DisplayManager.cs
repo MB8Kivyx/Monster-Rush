@@ -2,11 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// The DisplayManager class is responsible for calculating and managing the display boundaries 
-/// of the camera view in a 2D game. It initializes the boundaries based on the camera's orthographic 
-/// size and the screen dimensions, and provides methods to retrieve the display area's width and height.
-/// </summary>
 public class DisplayManager : MonoBehaviour
 {
 

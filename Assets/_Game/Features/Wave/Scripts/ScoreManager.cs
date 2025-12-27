@@ -4,19 +4,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using TMPro;
 
-/// <summary>
-/// The ScoreManager class is responsible for managing the player's score, including updating the current score and the best score.
-/// It handles score incrementation, display of current and best scores, and saving the best score using PlayerPrefs.
-/// </summary>
+
 public class ScoreManager : MonoBehaviour {
 
     public static ScoreManager Instance { get; private set; } // Singleton instance of ScoreManager
 
 
     private int currentScore = 0;
-    [SerializeField] private Text currentScoreText;
-    [SerializeField] private Text bestScoreText;
+    [SerializeField] private TextMeshProUGUI currentScoreText;
+    [SerializeField] private TextMeshProUGUI gameOverCurrentScoreText; // New: For Game Over panel
+    [SerializeField] private TextMeshProUGUI bestScoreText; // Keeping this if used elsewhere, but user wants MainMenu highscore separately
 
 
     private void Awake()
@@ -30,27 +29,85 @@ public class ScoreManager : MonoBehaviour {
 
         Instance = this;
 
+        // Reset current score to 0 when starting a new game
+        currentScore = 0;
+
         // Initialize the score display
-        currentScoreText.text = "0";
-        bestScoreText.text = PlayerPrefs.GetInt("BestScore", 0).ToString();
+        if (currentScoreText != null)
+        {
+            currentScoreText.text = "0";
+        }
+        
+        // Initialize Game Over score text
+        if (gameOverCurrentScoreText != null)
+        {
+            gameOverCurrentScoreText.text = "0";
+        }
+        else
+        {
+            // Fallback
+            var foundText = GameObject.Find("CurrentScoreText"); 
+            if (foundText != null)
+            {
+                 currentScoreText = foundText.GetComponent<TextMeshProUGUI>();
+                 if (currentScoreText != null) currentScoreText.text = "0";
+            }
+            else
+            {
+                 Debug.LogError("ScoreManager: currentScoreText is not assigned and could not be found!", this);
+            }
+        }
+        
+        if (bestScoreText != null)
+        {
+            bestScoreText.text = PlayerPrefs.GetInt("BestScore", 0).ToString();
+        }
+        else
+        {
+            Debug.LogError("ScoreManager: bestScoreText is not assigned in the Inspector!", this);
+        }
     }
 
     // Adds one to the current score and updates the UI
     public void IncrementScore()
     {
         currentScore++;
-        currentScoreText.text = currentScore.ToString();
-
-        // Update best score if the current score exceeds it
-        if (currentScore > PlayerPrefs.GetInt("BestScore", 0))
+        
+        // Update current score text
+        if (currentScoreText != null)
+        {
+            currentScoreText.text = currentScore.ToString();
+        }
+        
+        // Update Game Over score text
+        if (gameOverCurrentScoreText != null)
+        {
+            gameOverCurrentScoreText.text = currentScore.ToString();
+        }
+        else
+        {
+            Debug.LogWarning("ScoreManager: Cannot update current score - currentScoreText is null! Current score: " + currentScore, this);
+        }
+        int bestScore = PlayerPrefs.GetInt("BestScore", 0);
+        
+        if (currentScore > bestScore)
         {
             PlayerPrefs.SetInt("BestScore", currentScore);
             PlayerPrefs.Save();
-            bestScoreText.text = currentScore.ToString();
+            bestScore = currentScore; 
+        }
+        
+        if (bestScoreText != null)
+        {
+            bestScoreText.text = bestScore.ToString();
         }
     }
+    
+    public int GetBestScore()
+    {
+        return PlayerPrefs.GetInt("BestScore", 0);
+    }
 
-    // Returns the current score
     public int GetScore()
     {
         return currentScore;

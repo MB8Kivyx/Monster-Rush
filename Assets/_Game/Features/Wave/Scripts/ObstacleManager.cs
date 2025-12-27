@@ -15,12 +15,10 @@ public class ObstacleManager : MonoBehaviour
     
     // obstacle array 
     [SerializeField] private GameObject[] easyObstacleArray;
-    [SerializeField] private GameObject[] normalObstacleArray;
-    [SerializeField] private GameObject bubbleTesseractPrefab;
     [SerializeField] private bool disableObstaclesForTesting = false; // Skip obstacle spawning when enabled
     
     private int obstacleIndex = 0; // Index to track the number of obstacles instantiated
-    private int distanceBetweenObstacles = 50; // Distance between consecutive obstacles
+    private int distanceBetweenObstacles = 65; // Distance between consecutive obstacles
 
     private int playerPositionCheckpoint = -1; // Checkpoint to track player's position for obstacle instantiation
     private bool bubbleTesseractSpawned;
@@ -55,7 +53,7 @@ public class ObstacleManager : MonoBehaviour
 
         if (!bubbleTesseractSpawned)
         {
-            GameObject forcedPrefab = GetBubbleTesseractPrefab();
+            GameObject forcedPrefab = FindBubbleTesseractInArray(easyObstacleArray);
             if (forcedPrefab)
             {
                 InstantiateObstaclePrefab(forcedPrefab);
@@ -75,11 +73,7 @@ public class ObstacleManager : MonoBehaviour
             int randomIndex = Random.Range(0, easyObstacleArray.Length);
             InstantiateObstaclePrefab(easyObstacleArray[randomIndex]);
         }
-        else
-        {
-            int randomIndex = Random.Range(0, normalObstacleArray.Length);
-            InstantiateObstaclePrefab(normalObstacleArray[randomIndex]);
-        }
+       
 
         obstacleIndex++;
     }
@@ -96,17 +90,7 @@ public class ObstacleManager : MonoBehaviour
         newObstacle.transform.SetParent(transform);
     }
 
-    private GameObject GetBubbleTesseractPrefab()
-    {
-        if (bubbleTesseractPrefab) return bubbleTesseractPrefab;
-
-        bubbleTesseractPrefab = FindBubbleTesseractInArray(easyObstacleArray);
-        if (bubbleTesseractPrefab) return bubbleTesseractPrefab;
-
-        bubbleTesseractPrefab = FindBubbleTesseractInArray(normalObstacleArray);
-        return bubbleTesseractPrefab;
-    }
-
+    
     private static GameObject FindBubbleTesseractInArray(GameObject[] obstacleArray)
     {
         if (obstacleArray == null) return null;
@@ -124,9 +108,5 @@ public class ObstacleManager : MonoBehaviour
         return obstacle && obstacle.name == "BT_Soft4D";
     }
 
-
-
-    
-
-
 }
+
