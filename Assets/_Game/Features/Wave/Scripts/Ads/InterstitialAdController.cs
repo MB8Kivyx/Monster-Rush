@@ -12,7 +12,9 @@ public class InterstitialAdController : MonoBehaviour
 
     [Header("Ad Unit IDs")]
     [SerializeField] private string androidAdUnitId = "ca-app-pub-3025488325095617/7854003506";
+#pragma warning disable 0414
     [SerializeField] private string iosAdUnitId = "ca-app-pub-3025488325095617/2176787952";
+#pragma warning restore 0414
 
     private void Awake()
     {

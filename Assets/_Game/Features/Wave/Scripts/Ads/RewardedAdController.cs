@@ -11,7 +11,9 @@ public class RewardedAdController : MonoBehaviour
 
     [Header("Ad Unit IDs")]
     [SerializeField] private string androidAdUnitId = "ca-app-pub-3025488325095617/3882968906";
+#pragma warning disable 0414
     [SerializeField] private string iosAdUnitId = "ca-app-pub-3025488325095617/5168130413";
+#pragma warning restore 0414
 
 
     private void Awake()

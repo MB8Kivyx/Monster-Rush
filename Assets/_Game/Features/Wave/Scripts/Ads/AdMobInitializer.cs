@@ -8,7 +8,9 @@ public class AdMobInitializer : MonoBehaviour
 
     [Header("AdMob App IDs")]
     [SerializeField] private string androidAppId = "ca-app-pub-3025488325095617~8327155530";
+#pragma warning disable 0414
     [SerializeField] private string iosAppId = "ca-app-pub-3025488325095617~5808911207";
+#pragma warning restore 0414
 
     private void Awake()
     {

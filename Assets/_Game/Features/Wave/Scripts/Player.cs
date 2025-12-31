@@ -277,25 +277,58 @@ public class Player : MonoBehaviour
 
     private GameManager gameManagerComponent;
     private DisplayManager displayManagerComponent;
+
+    [Header("Movement Settings")]
+    [Tooltip("How fast the car moves Left/Right.")]
     [SerializeField] private float horizontalSpeed;
+    
+    [Tooltip("Starting forward speed.")]
     [SerializeField] private float verticalSpeed;
+    
+    [Tooltip("Maximum limit for speed (if needed).")]
     [SerializeField] private int maxVerticalSpeed;
+    
+    [Tooltip("Speed added per second automatically.")]
+    [SerializeField] private float speedIncreaseRate = 0.5f; 
+
+    // Legacy physics forces (unused now but kept to avoid broken refs if used elsewhere)
+    [Tooltip("How fast it speeds up when holding the player.")]
     [SerializeField] private int accelerationForce;
+    [Tooltip("How fast it slows down when released.")]
     [SerializeField] private int decelerationForce;
 
+    [Header("Visual Effects")]
+    [Tooltip("Maximum tilt angle when turning.")]
+    [SerializeField] private float maxRotationAngle = 15f;
+    [Tooltip("How fast the car rotates.")]
+    [SerializeField] private float carRotationSpeed = 10f;
+    
     [SerializeField] private GameObject deathEffect;
     [SerializeField] private GameObject colorChangeEffect;
 
     private bool isDead;
-    private bool freezeHorizontal;  // ⭐ new
     private float mapWidth;
-    private float movementAngle;
+    
+    // 3-LANE LOGIC
+    private int currentLane = 0; 
+    private float laneDistance; 
+    [SerializeField] private float laneSwitchSpeed = 10f;
+    private float targetX;
+
+    // Movement State
+    private float currentVerticalSpeed; // Actual speed being applied
 
     private Rigidbody2D rb;
 
     private AudioSource audioSource;
     [SerializeField] private AudioClip deathClip;
     [SerializeField] private AudioClip itemClip;
+
+    // ... (Awake, Start, etc. remain the same until MovePlayer)
+
+// ...
+
+    // ... (Awake, Start, etc. remain the same)
 
     private Collider2D playerCollider;
 
@@ -324,7 +357,16 @@ public class Player : MonoBehaviour
         if (displayManagerComponent != null)
         {
             mapWidth = displayManagerComponent.GetDisplayWidth();
+            // Calculate lane distance based on map width (e.g., 30% of width)
+            laneDistance = mapWidth * 0.3f;
         }
+        else
+        {
+            laneDistance = 2f; // Fallback
+        }
+        
+        targetX = transform.position.x; // Start at current
+        currentVerticalSpeed = verticalSpeed; // Start at base speed
     }
 
     private void OnDestroy()
@@ -333,50 +375,117 @@ public class Player : MonoBehaviour
             Instance = null;
     }
 
+    // Public Property for Sound Script
+    public float CurrentSpeed => currentVerticalSpeed;
+
     private void Update()
     {
         if (isDead) return;
+
+        // PROGRESSION: Increase base speed over time
+        verticalSpeed += speedIncreaseRate * Time.deltaTime;
+        
+        // Sync current speed (since we removed manual boost)
+        currentVerticalSpeed = verticalSpeed;
 
         HandleInput();
         MovePlayer();
     }
 
+    // Swipe Inputs
+    private Vector2 startTouchPosition;
+    private Vector2 endTouchPosition;
+    private float minSwipeDistance = 50f; // Minimum distance for a swipe to register
+
     private void HandleInput()
     {
-        // Tap pressed → go straight up
+        // 1. Swipe Detection (Lane Switch)
+        if (Input.GetMouseButtonDown(0))
+        {
+            startTouchPosition = Input.mousePosition;
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            endTouchPosition = Input.mousePosition;
+            DetectSwipe();
+        }
+
+        // 2. Hold Anywhere to Boost (Gas Pedal)
+        // User request: "when user tap on screen the speed should increase"
         if (Input.GetMouseButton(0))
         {
-            freezeHorizontal = true;   // ⭐ freeze left-right
-
-            if (rb.linearVelocity.y < maxVerticalSpeed)
-                rb.AddForce(Vector2.up * accelerationForce);
+            // Boost Speed towards Max
+            currentVerticalSpeed = Mathf.MoveTowards(currentVerticalSpeed, maxVerticalSpeed, accelerationForce * Time.deltaTime);
         }
         else
         {
-            freezeHorizontal = false;  // ⭐ resume left-right
-
-            if (rb.linearVelocity.y > 0)
-                rb.AddForce(Vector2.down * decelerationForce);
-            else
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
+            // Decelerate back to normal Progression Speed (verticalSpeed)
+            currentVerticalSpeed = Mathf.MoveTowards(currentVerticalSpeed, verticalSpeed, decelerationForce * Time.deltaTime);
         }
+    }
+
+    private void DetectSwipe()
+    {
+        float distanceX = endTouchPosition.x - startTouchPosition.x;
+        float distanceY = endTouchPosition.y - startTouchPosition.y;
+
+        // Check if horizontal swipe is long enough and dominant over vertical swipe
+        if (Mathf.Abs(distanceX) > minSwipeDistance && Mathf.Abs(distanceX) > Mathf.Abs(distanceY))
+        {
+            if (distanceX > 0)
+            {
+                // Swipe Right
+                MoveLane(1);
+            }
+            else
+            {
+                // Swipe Left
+                MoveLane(-1);
+            }
+        }
+    }
+    
+    private void MoveLane(int direction)
+    {
+        currentLane += direction;
+        currentLane = Mathf.Clamp(currentLane, -1, 1);
+        targetX = currentLane * laneDistance;
     }
 
     private void MovePlayer()
     {
         Vector2 position = transform.position;
 
-        // ⭐ If NOT pressed → left-right movement enabled
-        if (!freezeHorizontal)
-        {
-            position.x = Mathf.Cos(movementAngle) * (mapWidth * 0.45f);
-            movementAngle += Time.deltaTime * horizontalSpeed;
-        }
+        // Lane Switching
+        position.x = Mathf.MoveTowards(position.x, targetX, laneSwitchSpeed * Time.deltaTime);
 
-        // ⭐ Always move upward slowly (your original design)
-        position.y += verticalSpeed * Time.deltaTime;
+        // Vertical Movement with Boost
+        position.y += currentVerticalSpeed * Time.deltaTime;
 
         transform.position = position;
+        
+        // ROTATION LOGIC
+        // Determine direction of movement relative to target
+        float diff = targetX - position.x;
+        float targetZ = 0f;
+
+        // If we are still distant from the target lane, rotate
+        if (Mathf.Abs(diff) > 0.05f)
+        {
+            // Moving Right (diff > 0) -> Rotate Right (-Z)
+            // Moving Left  (diff < 0) -> Rotate Left  (+Z)
+            targetZ = diff > 0 ? -maxRotationAngle : maxRotationAngle;
+        }
+        
+        // Smooth Rotation
+        // Use MoveTowardsAngle for non-springy, reliable rotation towards target
+        float currentZ = transform.eulerAngles.z;
+        float newZ = Mathf.MoveTowardsAngle(currentZ, targetZ, carRotationSpeed * Time.deltaTime * 20f);
+        
+        transform.rotation = Quaternion.Euler(0, 0, newZ);
+
+        if(rb.bodyType != RigidbodyType2D.Kinematic) rb.linearVelocity = Vector2.zero; 
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -396,7 +505,7 @@ public class Player : MonoBehaviour
             GameObject fx = Instantiate(deathEffect, transform.position, Quaternion.identity);
             Destroy(fx, 0.5f);
             rb.linearVelocity = Vector2.zero;
-            rb.isKinematic = true;
+            rb.bodyType = RigidbodyType2D.Kinematic;
             if (gameManagerComponent != null)
             {
                 gameManagerComponent.GameOver();
@@ -408,13 +517,16 @@ public class Player : MonoBehaviour
     public void RevivePlayer()
     {
         isDead = false;
-        rb.isKinematic = false;
+        rb.bodyType = RigidbodyType2D.Dynamic;
         rb.linearVelocity = Vector2.zero;
 
         if (playerCollider != null)
             playerCollider.enabled = true;
 
         gameObject.SetActive(true);
+        
+        // Reset Lane on revive? Optional. keeping current lane.
+        targetX = transform.position.x;
     }
 }
 
