@@ -42,14 +42,16 @@ public class PlayerCollision : MonoBehaviour
             GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic; // Stop physics interactions
         }
 
-        if (gameManager != null)
+        if (GameManager.Instance != null)
         {
-            Debug.Log("PlayerCollision: Calling GameOver on GameManager.");
-            gameManager.GameOver();
+            Debug.Log("PlayerCollision: Calling GameOver on GameManager.Instance.");
+            GameManager.Instance.GameOver();
         }
         else
         {
-            Debug.LogError("PlayerCollision: Cannot call GameOver - GameManager is null!");
+            var gm = FindFirstObjectByType<GameManager>();
+            if (gm != null) gm.GameOver();
+            else Debug.LogError("PlayerCollision: GameManager not found!");
         }
     }
 }

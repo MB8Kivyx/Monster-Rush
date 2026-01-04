@@ -267,6 +267,7 @@
 
 
 
+using System.Collections;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -274,9 +275,9 @@ public class Player : MonoBehaviour
     public static Player Instance { get; private set; }
 
     [SerializeField] private GameObject gameManager;
-
-    private GameManager gameManagerComponent;
     private DisplayManager displayManagerComponent;
+
+    private bool isInvincible = false;
 
     [Header("Movement Settings")]
     [Tooltip("How fast the car moves Left/Right.")]
@@ -350,8 +351,13 @@ public class Player : MonoBehaviour
 
         if (gameManager != null)
         {
-            gameManagerComponent = gameManager.GetComponent<GameManager>();
             displayManagerComponent = gameManager.GetComponent<DisplayManager>();
+        }
+        
+        // Fallback: If not assigned, try to find by type
+        if (displayManagerComponent == null)
+        {
+            displayManagerComponent = FindFirstObjectByType<DisplayManager>();
         }
 
         if (displayManagerComponent != null)
@@ -499,17 +505,25 @@ public class Player : MonoBehaviour
             audioSource.PlayOneShot(itemClip, 1);
         }
 
-        if (other.CompareTag("Obstacle") && !isDead)
+        if (other.CompareTag("Obstacle") && !isDead && !isInvincible)
         {
             isDead = true;
             GameObject fx = Instantiate(deathEffect, transform.position, Quaternion.identity);
             Destroy(fx, 0.5f);
             rb.linearVelocity = Vector2.zero;
             rb.bodyType = RigidbodyType2D.Kinematic;
-            if (gameManagerComponent != null)
+            
+            if (GameManager.Instance != null)
             {
-                gameManagerComponent.GameOver();
+                GameManager.Instance.GameOver();
             }
+            else
+            {
+                // Last resort
+                var gm = FindFirstObjectByType<GameManager>();
+                if (gm != null) gm.GameOver();
+            }
+            
             audioSource.PlayOneShot(deathClip, 1);
         }
     }
@@ -525,8 +539,29 @@ public class Player : MonoBehaviour
 
         gameObject.SetActive(true);
         
-        // Reset Lane on revive? Optional. keeping current lane.
+        // Reset Lane on revive
         targetX = transform.position.x;
+
+        // Start Invincibility
+        StartCoroutine(ReviveInvincibility());
+    }
+
+    private IEnumerator ReviveInvincibility()
+    {
+        isInvincible = true;
+        
+        // Visual indicator (optional flickering)
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        float timer = 2f; // 2 seconds invincibility
+        while (timer > 0)
+        {
+            if (sr != null) sr.enabled = !sr.enabled;
+            yield return new WaitForSeconds(0.1f);
+            timer -= 0.1f;
+        }
+        
+        if (sr != null) sr.enabled = true;
+        isInvincible = false;
     }
 }
 
