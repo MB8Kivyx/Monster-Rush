@@ -56,9 +56,11 @@ public class GameManager : MonoBehaviour
             {
                 foreach (GameObject obj in Resources.FindObjectsOfTypeAll<GameObject>())
                 {
-                    if (obj.name.Contains("Revive") && obj.name.Contains("Panel"))
+                    // Case-insensitive check for "Revive"
+                    if (obj.name.ToLower().Contains("revive"))
                     {
                         revivePanel = obj;
+                        Debug.Log("GameManager: Found potential Revive Panel: " + obj.name);
                         break;
                     }
                 }

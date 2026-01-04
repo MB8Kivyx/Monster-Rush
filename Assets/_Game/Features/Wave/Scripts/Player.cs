@@ -364,8 +364,8 @@ public class Player : MonoBehaviour
         {
             mapWidth = displayManagerComponent.GetDisplayWidth();
             // Calculate lane distance based on map width (e.g., 30% of width)
-            laneDistance = mapWidth * 0.3f;
-        }
+            laneDistance = mapWidth * 0.4f;
+    }
         else
         {
             laneDistance = 2f; // Fallback

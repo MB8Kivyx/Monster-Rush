@@ -22,7 +22,6 @@ public class ScoreManager : MonoBehaviour {
     {
         if (Instance != null && Instance != this)
         {
-            Debug.LogWarning("Duplicate ScoreManager detected. Destroying redundant instance.", this);
             Destroy(gameObject);
             return;
         }
