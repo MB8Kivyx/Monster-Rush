@@ -14,6 +14,11 @@ public class MainMenu : MonoBehaviour
             int bestScore = PlayerPrefs.GetInt("BestScore", 0);
             highScoreText.text = bestScore.ToString(); // Or "High Score: " + bestScore
         }
+
+        if (BannerAdController.Instance != null)
+        {
+            BannerAdController.Instance.ShowBanner();
+        }
     }
     public void PlayGame()
     {

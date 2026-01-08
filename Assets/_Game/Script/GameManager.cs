@@ -36,6 +36,11 @@ public class GameManager : MonoBehaviour
         if (revivePanel != null) revivePanel.SetActive(false);
         Time.timeScale = 1f; // Game running
         AudioListener.pause = false; // Unmute all sounds
+
+        if (BannerAdController.Instance != null)
+        {
+            BannerAdController.Instance.ShowBanner();
+        }
     }
 
     public void GameOver()
@@ -109,6 +114,11 @@ public class GameManager : MonoBehaviour
         if (gameOverPanel != null) 
         {
             gameOverPanel.SetActive(true);
+            
+            if (InterstitialAdController.Instance != null)
+            {
+                InterstitialAdController.Instance.OnGameOver();
+            }
         }
         else
         {

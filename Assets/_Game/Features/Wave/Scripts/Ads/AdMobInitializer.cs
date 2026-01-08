@@ -7,9 +7,9 @@ public class AdMobInitializer : MonoBehaviour
     public static AdMobInitializer Instance { get; private set; }
 
     [Header("AdMob App IDs")]
-    [SerializeField] private string androidAppId = "ca-app-pub-3025488325095617~8327155530";
+    [SerializeField] private string androidAppId = "ca-app-pub-3025488325095617~6199307689";
 #pragma warning disable 0414
-    [SerializeField] private string iosAppId = "ca-app-pub-3025488325095617~5808911207";
+    [SerializeField] private string iosAppId = "ca-app-pub-3025488325095617~2260062676";
 #pragma warning restore 0414
 
     private void Awake()
@@ -137,7 +137,7 @@ public class AdMobInitializer : MonoBehaviour
         if (InterstitialAdController.Instance != null)
         {
             // Let the interstitial controller handle frequency logic
-            InterstitialAdController.Instance.TryShowAd();
+            InterstitialAdController.Instance.OnGameOver();
         }
         else
         {

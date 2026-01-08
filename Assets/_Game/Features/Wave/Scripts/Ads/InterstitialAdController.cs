@@ -11,9 +11,9 @@ public class InterstitialAdController : MonoBehaviour
     private const int GAMES_PER_AD = 3; // Show ad every 3 game overs
 
     [Header("Ad Unit IDs")]
-    [SerializeField] private string androidAdUnitId = "ca-app-pub-3025488325095617/7854003506";
+    [SerializeField] private string androidAdUnitId = "ca-app-pub-3025488325095617/2522613098";
 #pragma warning disable 0414
-    [SerializeField] private string iosAdUnitId = "ca-app-pub-3025488325095617/2176787952";
+    [SerializeField] private string iosAdUnitId = "ca-app-pub-3025488325095617/3381572657";
 #pragma warning restore 0414
 
     private void Awake()
@@ -32,6 +32,13 @@ public class InterstitialAdController : MonoBehaviour
 
     private void LoadInterstitialAd()
     {
+        // Clean up the old ad before loading a new one.
+        if (interstitialAd != null)
+        {
+            interstitialAd.Destroy();
+            interstitialAd = null;
+        }
+
         string adUnitId = GetAdUnitId();
 
         AdRequest request = new AdRequest();
@@ -62,6 +69,7 @@ public class InterstitialAdController : MonoBehaviour
             interstitialAd.OnAdFullScreenContentFailed += (AdError adError) =>
             {
                 Debug.LogError("Interstitial ad failed to show: " + adError.GetMessage());
+                LoadInterstitialAd(); // Try to load again if it failed
             };
         });
     }
@@ -70,14 +78,21 @@ public class InterstitialAdController : MonoBehaviour
     /// Call this method when the player dies/game over.
     /// It tracks game overs and shows ad every 3rd game over.
     /// </summary>
-    public void OnGameOver()
+    public void OnGameOver(Action onAdFinished = null)
     {
         gameOverCount++;
+        Debug.Log($"GameOver Count: {gameOverCount}/{GAMES_PER_AD}");
 
         if (gameOverCount >= GAMES_PER_AD)
         {
             ShowInterstitialAd();
             gameOverCount = 0; // Reset counter
+        }
+        else
+        {
+            // If we don't show an ad, we should probably still trigger the callback immediately? 
+            // In this specific game flow, it seems strictly for display, but good practice.
+             onAdFinished?.Invoke();
         }
     }
 
@@ -90,6 +105,7 @@ public class InterstitialAdController : MonoBehaviour
         else
         {
             Debug.Log("Interstitial ad is not ready yet.");
+            LoadInterstitialAd(); // Try loading again for next time
         }
     }
 
@@ -112,21 +128,4 @@ public class InterstitialAdController : MonoBehaviour
             Instance = null;
         }
     }
-    public void TryShowAd(Action onAdFinished = null)
-    {
-        gameOverCount++;
-
-        if (gameOverCount >= 3)
-        {
-            if (interstitialAd != null && interstitialAd.CanShowAd())
-            {
-                interstitialAd.Show();
-            }
-
-            gameOverCount = 0; // Reset counter
-        }
-
-        onAdFinished?.Invoke();
-    }
-
 }
