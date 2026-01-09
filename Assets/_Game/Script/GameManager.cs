@@ -139,26 +139,41 @@ public class GameManager : MonoBehaviour
 
     public void OnWatchAdButtonClicked()
     {
-        // call your rewarded ad script
+        // Stop the countdown while showing ad
+        if (countdownCoroutine != null) StopCoroutine(countdownCoroutine);
+        
+        // Call rewarded ad script
         if (RewardedAdController.Instance != null && RewardedAdController.Instance.IsRewardedAdReady())
         {
             RewardedAdController.Instance.ShowRewardedAd(() => 
             {
-                // On Reward Earned
+                // On Reward Earned - Only revive after watching the ad
                 Revive();
             }, () => 
             {
                 // On Ad Closed (without reward or failed)
-                // We could keep the countdown or show GameOver
-                // In many games, if ad fails, we just don't revive.
+                // Resume countdown or show game over
                 Debug.Log("Ad closed without reward or failed.");
+                ShowActualGameOver();
             });
         }
         else
         {
             Debug.LogWarning("Rewarded Ad not ready!");
-            // Optionally show a message to user
+            // Show game over if ad is not available
+            ShowActualGameOver();
         }
+    }
+
+    public void CancelRevive()
+    {
+        // Stop the countdown
+        if (countdownCoroutine != null) StopCoroutine(countdownCoroutine);
+        
+        // Show game over panel immediately
+        ShowActualGameOver();
+        
+        Debug.Log("Revive cancelled by user.");
     }
 
     public void Revive()
