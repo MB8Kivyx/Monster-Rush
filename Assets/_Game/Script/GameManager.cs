@@ -139,6 +139,7 @@ public class GameManager : MonoBehaviour
 
     public void OnWatchAdButtonClicked()
     {
+        Debug.Log("GameManager: OnWatchAdButtonClicked called");
         // Stop the countdown while showing ad
         if (countdownCoroutine != null) StopCoroutine(countdownCoroutine);
         

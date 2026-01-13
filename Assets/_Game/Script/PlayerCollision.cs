@@ -14,6 +14,9 @@ public class PlayerCollision : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        // Check invincibility
+        if (Player.Instance != null && Player.Instance.IsInvincible) return;
+
         // For Trigger Colliders
         if (other.CompareTag("Obstacle"))
         {
@@ -24,6 +27,9 @@ public class PlayerCollision : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        // Check invincibility
+        if (Player.Instance != null && Player.Instance.IsInvincible) return;
+
         // For Solid Colliders
         if (collision.gameObject.CompareTag("Obstacle"))
         {

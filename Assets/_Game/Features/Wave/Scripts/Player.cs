@@ -528,6 +528,8 @@ public class Player : MonoBehaviour
         }
     }
 
+    public bool IsInvincible => isInvincible;
+
     public void RevivePlayer()
     {
         isDead = false;
@@ -552,7 +554,7 @@ public class Player : MonoBehaviour
         
         // Visual indicator (optional flickering)
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
-        float timer = 2f; // 2 seconds invincibility
+        float timer = 5f; // 5 seconds invincibility
         while (timer > 0)
         {
             if (sr != null) sr.enabled = !sr.enabled;

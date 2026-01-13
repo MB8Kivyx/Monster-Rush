@@ -3995,7 +3995,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1870018265}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: Revive
+        m_MethodName: OnWatchAdButtonClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
