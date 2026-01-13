@@ -1,10 +1,12 @@
+using System.Collections;
 using UnityEngine;
 
 public class CarSoundController : MonoBehaviour
 {
     [Header("Audio Settings")]
     public AudioSource carAudioSource;
-    public AudioClip carSoundClip;
+    public AudioClip engineStartClip; // The "Vroom" start sound
+    public AudioClip engineLoopClip;  // The continuous "Hummm" sound (formerly carSoundClip)
 
     [Header("Engine Settings")]
     [Tooltip("Volume when NOT touching (Idle)")]
@@ -23,6 +25,7 @@ public class CarSoundController : MonoBehaviour
     public float fadeSpeed = 3.0f;
 
     private bool isTouching = false;
+    private bool isLooping = false; // Check if we are in the loop phase
 
     public static CarSoundController Instance;
 
@@ -42,16 +45,31 @@ public class CarSoundController : MonoBehaviour
         if (carAudioSource == null)
             carAudioSource = gameObject.AddComponent<AudioSource>();
 
-        // Setup AudioSource for continuous engine sound
-        carAudioSource.loop = true; 
-        carAudioSource.playOnAwake = true;
-        
-        // Start Sound Immediately
-        if (carSoundClip != null)
+        StartCoroutine(PlayEngineSequence());
+    }
+
+    IEnumerator PlayEngineSequence()
+    {
+        // 1. Play Start Sound (if assigned)
+        if (engineStartClip != null)
         {
-            carAudioSource.clip = carSoundClip;
-            carAudioSource.volume = idleVolume; // Start at idle
-            carAudioSource.pitch = idlePitch;
+            isLooping = false; // Pitch/Volume logic logic disabled/dampened during start
+            carAudioSource.loop = false;
+            carAudioSource.clip = engineStartClip;
+            carAudioSource.volume = 1f; // Usually start sound is loud
+            carAudioSource.pitch = 1f;  // Normal pitch for start
+            carAudioSource.Play();
+
+            // Wait until start sound finishes
+            yield return new WaitForSeconds(engineStartClip.length);
+        }
+
+        // 2. Switch to Loop Sound
+        if (engineLoopClip != null)
+        {
+            isLooping = true;
+            carAudioSource.loop = true;
+            carAudioSource.clip = engineLoopClip;
             carAudioSource.Play();
         }
     }
@@ -81,7 +99,11 @@ public class CarSoundController : MonoBehaviour
         // 2. Normal Input Handling
         isTouching = Input.GetMouseButton(0);
 
-        HandleEngineSound();
+        // Only modulate engine sound if we are in the Looping phase
+        if (isLooping)
+        {
+            HandleEngineSound();
+        }
     }
 
     void HandleEngineSound()
