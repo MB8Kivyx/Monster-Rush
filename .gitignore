@@ -75,3 +75,6 @@ sysinfo.txt
 .DS_Store
 Thumbs.db
 ehthumbs.db
+
+# Temporary build files
+.utmp/

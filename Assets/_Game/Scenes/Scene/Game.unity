@@ -2583,7 +2583,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 4d127dcce2aa52d46b90c526a44fc04b, type: 3}
+  m_Texture: {fileID: 2800000, guid: 22124e90f005c4ee98860c3a189e6b12, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -3542,7 +3542,7 @@ RectTransform:
   m_GameObject: {fileID: 1671537739}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.09605888, y: 0.12366365, z: 0.08965368}
+  m_LocalScale: {x: 0.14189819, y: 0.18267594, z: 0.13243641}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1443290763}
@@ -5870,8 +5870,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58e7b16cd0b114868a2bac6916e63cde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BannerAdController
-  androidAdUnitId: ca-app-pub-3025488325095617/4886226012
-  iosAdUnitId: ca-app-pub-3025488325095617/8035133537
+  androidAdUnitId: ' ca-app-pub-3025488325095617/2023865742'
+  iosAdUnitId: ' ca-app-pub-3025488325095617/8035133537'
 --- !u!114 &2107028338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5884,7 +5884,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e07557f35c4274955a8c9bc6c4f64ffb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RewardedAdController
-  androidAdUnitId: ca-app-pub-3025488325095617/8896449755
+  androidAdUnitId: ca-app-pub-3025488325095617/3265645280
   iosAdUnitId: ca-app-pub-3025488325095617/2068490987
 --- !u!114 &2107028339
 MonoBehaviour:
@@ -5898,7 +5898,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1eb24ea5aec634b4e801d428a8fba077, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InterstitialAdController
-  androidAdUnitId: ca-app-pub-3025488325095617/2522613098
+  androidAdUnitId: ' ca-app-pub-3025488325095617/9607692357'
   iosAdUnitId: ca-app-pub-3025488325095617/3381572657
 --- !u!114 &2107028340
 MonoBehaviour:
