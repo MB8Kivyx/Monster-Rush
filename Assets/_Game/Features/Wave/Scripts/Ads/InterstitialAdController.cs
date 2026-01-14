@@ -11,7 +11,7 @@ public class InterstitialAdController : MonoBehaviour
     private const int GAMES_PER_AD = 3; // Show ad every 3 game overs
 
     [Header("Ad Unit IDs")]
-    [SerializeField] private string androidAdUnitId = "ca-app-pub-3025488325095617/2522613098";
+    [SerializeField] private string androidAdUnitId = "ca-app-pub-3025488325095617/9607692357";
 #pragma warning disable 0414
     [SerializeField] private string iosAdUnitId = "ca-app-pub-3025488325095617/3381572657";
 #pragma warning restore 0414

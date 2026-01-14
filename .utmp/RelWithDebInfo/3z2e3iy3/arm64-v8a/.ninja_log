@@ -1,0 +1,10 @@
+# ninja log v5
+5	3355	1768367864228602978	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	12f3b113b3e3f893
+7	3382	1768367864257048170	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	9382849b877516
+2	3497	1768367864364730547	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	e5a6d8daf185544f
+9	3528	1768367864388646917	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	f0a8775321b4fea
+3	3653	1768367864521451717	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	f51f886eab3e635e
+10	3845	1768367864710683917	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	cee6bde4ea183c9d
+6	4291	1768367865158665665	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	32606a3f9b772ed6
+0	4602	1768367865468482989	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	62d0dbb7fbbbc4fb
+4602	4778	1768367865657127343	/Users/jawad/Desktop/DarkStar Studios/Monster-Rush/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/3z2e3iy3/obj/arm64-v8a/libgame.so	14d6c3f1808bbc7b

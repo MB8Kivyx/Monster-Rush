@@ -993,7 +993,13 @@ PlayerSettings:
   XboxOneOverrideIdentityPublisher: 
   vrEditorSettings: {}
   cloudServicesEnabled:
+    Build: 0
+    Game Performance: 0
+    Legacy Analytics: 0
+    Purchasing: 0
+    UDP: 0
     UNet: 1
+    Unity Ads: 0
   luminIcon:
     m_Name: 
     m_ModelFolderPath: 
@@ -1015,11 +1021,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: 
+  cloudProjectId: 6e2944cc-0c63-4833-a3fe-4720b6e63bea
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: Wave Runner
-  organizationId: 
+  projectName: Monster Rush
+  organizationId: kamrankhankhail
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 1
   hmiLoadingImage: {fileID: 0}

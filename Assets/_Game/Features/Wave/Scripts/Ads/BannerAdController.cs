@@ -9,7 +9,7 @@ public class BannerAdController : MonoBehaviour
     private BannerView _bannerView;
 
     [Header("Ad Unit IDs")]
-    [SerializeField] private string androidAdUnitId = "ca-app-pub-3025488325095617/4886226012";
+    [SerializeField] private string androidAdUnitId = "ca-app-pub-3025488325095617/2023865742";
 #pragma warning disable 0414
     [SerializeField] private string iosAdUnitId = "ca-app-pub-3025488325095617/8035133537";
 #pragma warning restore 0414

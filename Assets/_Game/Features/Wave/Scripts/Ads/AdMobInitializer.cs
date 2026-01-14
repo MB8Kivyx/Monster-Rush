@@ -7,7 +7,7 @@ public class AdMobInitializer : MonoBehaviour
     public static AdMobInitializer Instance { get; private set; }
 
     [Header("AdMob App IDs")]
-    [SerializeField] private string androidAppId = "ca-app-pub-3025488325095617~6199307689";
+    [SerializeField] private string androidAppId = "ca-app-pub-3025488325095617~2532159878";
 #pragma warning disable 0414
     [SerializeField] private string iosAppId = "ca-app-pub-3025488325095617~2260062676";
 #pragma warning restore 0414

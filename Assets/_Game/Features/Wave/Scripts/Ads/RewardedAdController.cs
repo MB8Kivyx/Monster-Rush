@@ -10,7 +10,7 @@ public class RewardedAdController : MonoBehaviour
     private bool isLoading = false;
 
     [Header("Ad Unit IDs")]
-    [SerializeField] private string androidAdUnitId = "ca-app-pub-3025488325095617/8896449755";
+    [SerializeField] private string androidAdUnitId = "ca-app-pub-3025488325095617/3265645280";
 #pragma warning disable 0414
     [SerializeField] private string iosAdUnitId = "ca-app-pub-3025488325095617/2068490987";
 #pragma warning restore 0414
