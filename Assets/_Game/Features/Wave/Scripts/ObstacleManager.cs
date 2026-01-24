@@ -1,4 +1,4 @@
-﻿
+
 
 using System.Collections;
 using System.Collections.Generic;
@@ -16,97 +16,82 @@ public class ObstacleManager : MonoBehaviour
     // obstacle array 
     [SerializeField] private GameObject[] easyObstacleArray;
     [SerializeField] private bool disableObstaclesForTesting = false; // Skip obstacle spawning when enabled
-    
-    private int obstacleIndex = 0; // Index to track the number of obstacles instantiated
-    private int distanceBetweenObstacles = 65; // Distance between consecutive obstacles
+    [SerializeField] private float distanceBetweenObstacles = 65f;
+    [SerializeField] private float safeZoneDistance = 40f; 
+    [SerializeField] private float spawnDelay = 1.5f; 
 
-    private int playerPositionCheckpoint = -1; // Checkpoint to track player's position for obstacle instantiation
-    private bool bubbleTesseractSpawned;
-
+    private float lastSpawnY; 
+    private float spawnTimer = 0f;
+    private bool canSpawn = false;
 
     private void Start()
     {
-        SpawnObstacle();
+        // 1. Force the first spawn to be beyond the safe zone
+        if (player != null)
+        {
+            lastSpawnY = player.transform.position.y + safeZoneDistance - distanceBetweenObstacles;
+        }
+        else
+        {
+            lastSpawnY = -distanceBetweenObstacles;
+        }
+
+        // 2. Set the delay timer
+        spawnTimer = spawnDelay;
+        canSpawn = false;
     }
 
     private void Update()
     {
-        // When the player's y-position increases, spawn a new obstacle
-        int currentCheckpoint = (int)player.transform.position.y / 25;
-        
-        if (playerPositionCheckpoint != currentCheckpoint)
+        if (player == null) return;
+
+        // 3. Spawning Delay Logic
+        if (!canSpawn)
+        {
+            spawnTimer -= Time.deltaTime;
+            if (spawnTimer <= 0)
+            {
+                canSpawn = true;
+            }
+            return; // Don't spawn yet
+        }
+
+        // Spawn a new obstacle when the player gets close to the last spawn point
+        // Keeping obstacles 120 units ahead of the player
+        if (player.transform.position.y + 120f > lastSpawnY + distanceBetweenObstacles)
         {
             SpawnObstacle();
-            playerPositionCheckpoint = currentCheckpoint;
         }
     }
 
-
-    // Spawns an obstacle based on the player's score
     private void SpawnObstacle()
     {
-        if (disableObstaclesForTesting)
-        {
-            obstacleIndex++;
-            return;
-        }
+        if (disableObstaclesForTesting) return;
 
-        if (!bubbleTesseractSpawned)
-        {
-            GameObject forcedPrefab = FindBubbleTesseractInArray(easyObstacleArray);
-            if (forcedPrefab)
-            {
-                InstantiateObstaclePrefab(forcedPrefab);
-                bubbleTesseractSpawned = true;
-                obstacleIndex++;
-                return;
-            }
-
-            bubbleTesseractSpawned = true;
-        }
-
-        int score = ScoreManager.Instance.GetScore(); // Get the current score from the ScoreManager
+        int score = ScoreManager.Instance.GetScore();
         
-        // Choose obstacle difficulty based on score
+        // Difficulty Logic
         if (score < 20)
         {
             int randomIndex = Random.Range(0, easyObstacleArray.Length);
             InstantiateObstaclePrefab(easyObstacleArray[randomIndex]);
         }
-       
-
-        obstacleIndex++;
+        else
+        {
+            // Fallback for higher scores if normalObstacleArray is ever added
+            int randomIndex = Random.Range(0, easyObstacleArray.Length);
+            InstantiateObstaclePrefab(easyObstacleArray[randomIndex]);
+        }
     }
 
     private void InstantiateObstaclePrefab(GameObject obstaclePrefab)
     {
-        if (!obstaclePrefab)
-        {
-            Debug.LogWarning("ObstacleManager attempted to spawn a null obstacle prefab.", this);
-            return;
-        }
+        if (!obstaclePrefab) return;
 
-        GameObject newObstacle = Instantiate(obstaclePrefab, new Vector3(0, obstacleIndex * distanceBetweenObstacles), Quaternion.identity);
+        float spawnY = lastSpawnY + distanceBetweenObstacles;
+        GameObject newObstacle = Instantiate(obstaclePrefab, new Vector3(0, spawnY, 0), Quaternion.identity);
         newObstacle.transform.SetParent(transform);
+        lastSpawnY = spawnY;
     }
-
-    
-    private static GameObject FindBubbleTesseractInArray(GameObject[] obstacleArray)
-    {
-        if (obstacleArray == null) return null;
-
-        foreach (GameObject obstacle in obstacleArray)
-        {
-            if (IsBubbleTesseractPrefab(obstacle)) return obstacle;
-        }
-
-        return null;
-    }
-
-    private static bool IsBubbleTesseractPrefab(GameObject obstacle)
-    {
-        return obstacle && obstacle.name == "BT_Soft4D";
-    }
-
 }
 

@@ -45,33 +45,64 @@ public class CarSoundController : MonoBehaviour
         if (carAudioSource == null)
             carAudioSource = gameObject.AddComponent<AudioSource>();
 
-        StartCoroutine(PlayEngineSequence());
+        // SEAMLESS LOOPING IMPLEMENTATION
+        PlayPreciseEngineSequence();
     }
 
-    IEnumerator PlayEngineSequence()
+    private void PlayPreciseEngineSequence()
     {
-        // 1. Play Start Sound (if assigned)
         if (engineStartClip != null)
         {
-            isLooping = false; // Pitch/Volume logic logic disabled/dampened during start
+            isLooping = false;
             carAudioSource.loop = false;
             carAudioSource.clip = engineStartClip;
-            carAudioSource.volume = 1f; // Usually start sound is loud
-            carAudioSource.pitch = 1f;  // Normal pitch for start
-            carAudioSource.Play();
+            carAudioSource.volume = 1f;
+            carAudioSource.pitch = 1f;
+            
+            double startTime = AudioSettings.dspTime + 0.1; // Small buffer for scheduling
+            carAudioSource.PlayScheduled(startTime);
 
-            // Wait until start sound finishes
-            yield return new WaitForSeconds(engineStartClip.length);
+            if (engineLoopClip != null)
+            {
+                // Schedule the looping clip to start exactly when the start clip finishes
+                double duration = (double)engineStartClip.samples / engineStartClip.frequency;
+                double loopStartTime = startTime + duration;
+
+                // We use a coroutine to handle the switch in logic state (isLooping)
+                // but the audio itself is scheduled by the engine for zero gap.
+                StartCoroutine(TransitionToLoopState(loopStartTime));
+            }
         }
-
-        // 2. Switch to Loop Sound
-        if (engineLoopClip != null)
+        else if (engineLoopClip != null)
         {
-            isLooping = true;
-            carAudioSource.loop = true;
-            carAudioSource.clip = engineLoopClip;
-            carAudioSource.Play();
+            StartLoopingImmediately();
         }
+    }
+
+    private void StartLoopingImmediately()
+    {
+        isLooping = true;
+        carAudioSource.loop = true;
+        carAudioSource.clip = engineLoopClip;
+        carAudioSource.Play();
+    }
+
+    private IEnumerator TransitionToLoopState(double loopStartTime)
+    {
+        // Wait until just before the loop starts to change the script's internal state
+        // This ensures pitch/volume modulation starts at the right time.
+        while (AudioSettings.dspTime < loopStartTime - 0.02)
+        {
+            yield return null;
+        }
+
+        isLooping = true;
+        carAudioSource.loop = true;
+        carAudioSource.clip = engineLoopClip;
+        
+        // If it's the same AudioSource, we must call Play() or PlayScheduled() 
+        // to start the next clip. PlayScheduled is more precise.
+        carAudioSource.PlayScheduled(loopStartTime);
     }
 
     private bool wasPausedByTimeScale = false;

@@ -370,7 +370,7 @@ RectTransform:
   m_GameObject: {fileID: 61305921}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.1875, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1476608786}
@@ -378,7 +378,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 7, y: 135.71278}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &61305923
@@ -1266,15 +1266,15 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: d4cea17f436fa5548a58c7ecaa8be408, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ff9253dbc8447e544ab330d015219ad5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 3.72, y: 8}
+  m_Size: {x: 11.93, y: 20.21}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
 --- !u!4 &645773063
 Transform:
@@ -1285,8 +1285,8 @@ Transform:
   m_GameObject: {fileID: 645773061}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -1, w: 0}
-  m_LocalPosition: {x: 2.2, y: -3, z: 0}
-  m_LocalScale: {x: 2.5748358, y: 6.1739116, z: 2.7851813}
+  m_LocalPosition: {x: 2.9, y: -3, z: 0}
+  m_LocalScale: {x: 0.92888135, y: 6.1739116, z: 2.7851813}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1737990514}
@@ -1458,7 +1458,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &783998990
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2489,7 +2489,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1362290956
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2674,7 +2674,7 @@ RectTransform:
   m_GameObject: {fileID: 1476608785}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5.6505, y: 1.1700001, z: 1}
+  m_LocalScale: {x: 5.6505, y: 1.7257501, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2018096075}
@@ -2682,7 +2682,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 90, y: 723}
+  m_AnchoredPosition: {x: 86, y: 685}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1476608787
@@ -2750,7 +2750,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarSoundController
   carAudioSource: {fileID: 1864328887}
-  engineStartClip: {fileID: 8300000, guid: 906baad1b052240e4a6e81525703c6e1, type: 3}
+  engineStartClip: {fileID: 8300000, guid: 2f30ac66dfdbb4c6d9c3b2342b168e71, type: 3}
   engineLoopClip: {fileID: 8300000, guid: 4fbc59fe5d9d54d67a387cb212faf38b, type: 3}
   idleVolume: 0.3
   revVolume: 1
@@ -3422,7 +3422,7 @@ RectTransform:
   m_GameObject: {fileID: 1652766695}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 11.025716, y: 20.579498, z: 11.025716}
+  m_LocalScale: {x: 10.220547, y: 24.035082, z: 11.025716}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 603948918}
@@ -4126,14 +4126,14 @@ RectTransform:
   m_GameObject: {fileID: 1769677224}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.21875, y: 5.3625, z: 1.21875}
+  m_LocalScale: {x: 1.4320312, y: 6.770157, z: 1.21875}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2125758150}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 171.4, y: 2047.6}
+  m_AnchoredPosition: {x: 120, y: 2171}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1769677226
@@ -4318,7 +4318,7 @@ RectTransform:
   m_GameObject: {fileID: 1789341383}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.0737134, y: 1.1679139, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 603948918}
@@ -4539,16 +4539,17 @@ MonoBehaviour:
   horizontalSpeed: 2
   verticalSpeed: 2
   maxVerticalSpeed: 13
-  speedIncreaseRate: 0.5
-  accelerationForce: 30
-  decelerationForce: 15
+  accelerationForce: 15
+  decelerationForce: 10
   maxRotationAngle: 15
   carRotationSpeed: 10
   deathEffect: {fileID: 1204438978744632, guid: 65a5451625ed1496c8722e9a83ed5dc3,
     type: 3}
   colorChangeEffect: {fileID: 1627291491608086, guid: aee0cb9d4e7484ef78d4a6b547b5c955,
     type: 3}
-  laneSwitchSpeed: 10
+  horizontalMovementSmoothing: 0.1
+  swipeThreshold: 50
+  laneWidth: 2
   deathClip: {fileID: 8300000, guid: 2eaafa90ded0f4e4ab05a0b804418959, type: 3}
   itemClip: {fileID: 8300000, guid: d3acbb6292e6749f991ca44d7aff0e9b, type: 3}
 --- !u!50 &1864328883
@@ -5300,8 +5301,8 @@ Transform:
   m_GameObject: {fileID: 1980133191}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -1, w: 0}
-  m_LocalPosition: {x: 2.2, y: -3, z: 0}
-  m_LocalScale: {x: 2.5748358, y: 6.1739116, z: 2.7851813}
+  m_LocalPosition: {x: 2.24, y: -3, z: 0}
+  m_LocalScale: {x: 0.878724, y: 6.1739116, z: 2.7851813}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1737990514}
@@ -5355,7 +5356,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: d4cea17f436fa5548a58c7ecaa8be408, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7c909431ba8a5cb4cb773dca6cbc25fa, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -5668,7 +5669,7 @@ RectTransform:
   m_GameObject: {fileID: 2018096074}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1.025, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2013275991}
@@ -5676,7 +5677,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0.031343}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2019394632
@@ -5991,6 +5992,9 @@ MonoBehaviour:
   - {fileID: 1087896060543196, guid: 8f632d96755f741d981a20ec21b8414f, type: 3}
   - {fileID: 1087896060543196, guid: 8f632d96755f741d981a20ec21b8414f, type: 3}
   disableObstaclesForTesting: 0
+  distanceBetweenObstacles: 85
+  safeZoneDistance: 30
+  spawnDelay: 1.5
 --- !u!1 &2125758149
 GameObject:
   m_ObjectHideFlags: 0

@@ -67,7 +67,13 @@ public class TyreRotation : MonoBehaviour
 
     void RotateTyres()
 {
-    float rotationAmount = rotationSpeed * Time.deltaTime;
+    float speedFactor = 1f;
+    if (Player.Instance != null)
+    {
+        // Scale rotation by how much faster we are than base speed
+        speedFactor = Player.Instance.CurrentSpeed / Player.Instance.BaseSpeed;
+    }
+    float rotationAmount = rotationSpeed * speedFactor * Time.deltaTime;
 
     if (frontLeftTyre != null) frontLeftTyre.Rotate(rotationAmount, 0, 0);
     if (frontRightTyre != null) frontRightTyre.Rotate(rotationAmount, 0, 0);

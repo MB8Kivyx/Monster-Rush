@@ -549,8 +549,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -182.57, y: 63}
-  m_SizeDelta: {x: 452.5, y: 124}
+  m_AnchoredPosition: {x: -182.57, y: 46}
+  m_SizeDelta: {x: 448.4595, y: 124}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!95 &387648577
 Animator:
@@ -630,9 +630,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1228324148}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
-        m_MethodName: Play
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -789,8 +789,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -160, y: 31.4}
-  m_SizeDelta: {x: 270, y: 50}
+  m_AnchoredPosition: {x: -73.1284, y: 5.2944}
+  m_SizeDelta: {x: 441.8008, y: 97.4646}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &519053229
 MonoBehaviour:
@@ -878,7 +878,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 1
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 3.9894605, z: -174.93042, w: -40.13007}
+  m_margin: {x: 0, y: 3.9894605, z: -11.120222, w: -2.4856606}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -2121,8 +2121,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 6, y: -30.209}
-  m_SizeDelta: {x: 600, y: 670.2}
+  m_AnchoredPosition: {x: 6, y: 82.428185}
+  m_SizeDelta: {x: 600, y: 545.8168}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1291383631
 MonoBehaviour:
@@ -2356,7 +2356,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -183.75, y: -144}
+  m_AnchoredPosition: {x: -183.75, y: -123}
   m_SizeDelta: {x: 452.5, y: 124}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!95 &1323119601

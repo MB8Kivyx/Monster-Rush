@@ -20,14 +20,17 @@ public class EndlessRoadFollowCamera : MonoBehaviour
             .bounds.size.y;
     }
 
-    void Update()
+    void LateUpdate()
     {
-        // Follow camera smoothly
-        transform.position = new Vector3(
-            transform.position.x,
-            cam.position.y,
-            transform.position.z
-        );
+        // Follow camera smoothly in LateUpdate to match player movement
+        if (cam != null)
+        {
+            transform.position = new Vector3(
+                transform.position.x,
+                cam.position.y,
+                transform.position.z
+            );
+        }
 
         MoveRoad();
     }

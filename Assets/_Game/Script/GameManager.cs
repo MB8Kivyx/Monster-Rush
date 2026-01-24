@@ -37,6 +37,9 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f; // Game running
         AudioListener.pause = false; // Unmute all sounds
 
+        // Track that a game session has started
+        RateUs.IncrementGamesPlayed();
+
         if (BannerAdController.Instance != null)
         {
             BannerAdController.Instance.ShowBanner();
@@ -45,43 +48,18 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
-        Time.timeScale = 0f; // PAUSE EVERYTHING (physics, animations, etc.)
+        Debug.Log("GameManager: GameOver called.");
+        Time.timeScale = 0f; // PAUSE EVERYTHING
         AudioListener.pause = true; // MUTE EVERYTHING
 
-        // Robust check for revivePanel (including inactive objects)
-        if (revivePanel == null)
-        {
-            // Try common names
-            revivePanel = FindObjectInactive("RevivePanel");
-            if (revivePanel == null) revivePanel = FindObjectInactive("Revive Panel");
-            if (revivePanel == null) revivePanel = FindObjectInactive("ReviveWindow");
-            
-            // Try searching for ANY object with "Revive" in the name if still null
-            if (revivePanel == null)
-            {
-                foreach (GameObject obj in Resources.FindObjectsOfTypeAll<GameObject>())
-                {
-                    // Case-insensitive check for "Revive"
-                    if (obj.name.ToLower().Contains("revive"))
-                    {
-                        revivePanel = obj;
-                        Debug.Log("GameManager: Found potential Revive Panel: " + obj.name);
-                        break;
-                    }
-                }
-            }
-
-            if (revivePanel == null) revivePanel = Look; 
-        }
-
-        if (countdownText == null && revivePanel != null)
-        {
-            countdownText = revivePanel.GetComponentInChildren<TextMeshProUGUI>();
-        }
-
+        // Check for revivePanel
         if (revivePanel != null)
         {
             revivePanel.SetActive(true);
+            
+            if (countdownText == null)
+                countdownText = revivePanel.GetComponentInChildren<TextMeshProUGUI>();
+
             if (countdownCoroutine != null) StopCoroutine(countdownCoroutine);
             countdownCoroutine = StartCoroutine(StartReviveCountdown());
         }
@@ -219,8 +197,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Game Resumed: Audio Playing.");
     }
 
-    // Call this from your score system (e.g., collect coin: score++, UpdateScoreUI())
-    // Helper to find inactive objects by name
+    // Helper to find inactive objects by name (used sparingly)
     private GameObject FindObjectInactive(string name)
     {
         foreach (GameObject obj in Resources.FindObjectsOfTypeAll<GameObject>())
