@@ -49,6 +49,33 @@ public class RewardedAdController : MonoBehaviour
         RewardedAd.Load(adUnitId, request, AdLoadCallback);
     }
 
+    private Action _onRewardEarned;
+    private Action _onAdClosed;
+    private bool _rewardEarned;
+
+    public void ShowRewardedAd(Action onRewardEarned, Action onAdClosed = null)
+    {
+        if (rewardedAd != null && rewardedAd.CanShowAd())
+        {
+            _onRewardEarned = onRewardEarned;
+            _onAdClosed = onAdClosed;
+            _rewardEarned = false;
+
+            rewardedAd.Show((Reward reward) =>
+            {
+                Debug.Log($"Player earned reward: {reward.Amount} {reward.Type}");
+                _rewardEarned = true;
+                _onRewardEarned?.Invoke();
+                _onRewardEarned = null; // Prevent double trigger
+            });
+        }
+        else
+        {
+            Debug.Log("Rewarded ad not ready.");
+            onAdClosed?.Invoke();
+        }
+    }
+
     private void AdLoadCallback(RewardedAd ad, LoadAdError error)
     {
         if (error != null || ad == null)
@@ -67,35 +94,35 @@ public class RewardedAdController : MonoBehaviour
 
         // Subscribe to events
         rewardedAd.OnAdFullScreenContentOpened += () => Debug.Log("Rewarded ad opened");
+        
         rewardedAd.OnAdFullScreenContentClosed += () =>
         {
             Debug.Log("Rewarded ad closed/skipped");
+            
+            // If reward wasn't earned (user closed early or skip), trigger failure callback
+            if (!_rewardEarned)
+            {
+                _onAdClosed?.Invoke();
+            }
+            
+            _onRewardEarned = null;
+            _onAdClosed = null;
+            
             LoadRewardedAd(); // Auto reload
         };
+
         rewardedAd.OnAdFullScreenContentFailed += (AdError err) =>
         {
             Debug.LogError("Rewarded ad failed to show: " + err.GetMessage());
+            
+            _onAdClosed?.Invoke();
+            _onRewardEarned = null;
+            _onAdClosed = null;
+            
             LoadRewardedAd();
         };
+        
         rewardedAd.OnAdPaid += (AdValue value) => Debug.Log($"Ad paid: {value.Value} {value.CurrencyCode}");
-    }
-
-    public void ShowRewardedAd(Action onRewardEarned, Action onAdClosed = null)
-    {
-        if (rewardedAd != null && rewardedAd.CanShowAd())
-        {
-            rewardedAd.Show((Reward reward) =>
-            {
-                Debug.Log($"Player earned reward: {reward.Amount} {reward.Type}");
-                onRewardEarned?.Invoke();
-            });
-
-        }
-        else
-        {
-            Debug.Log("Rewarded ad not ready.");
-            onAdClosed?.Invoke();
-        }
     }
 
     // This is the KEY method for hiding the button!

@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
-using TMPro; // For countdown text
+using TMPro; 
+using UnityEngine.UI; // For heart images
 
 
 public class GameManager : MonoBehaviour
@@ -14,6 +15,9 @@ public class GameManager : MonoBehaviour
     public GameObject Panel;
     public GameObject gameOverwindow;
     public GameObject Look;
+
+    [Header("Life System Component")]
+    [SerializeField] private LifeSystem lifeSystem;
 
     private Coroutine countdownCoroutine;
 
@@ -34,6 +38,9 @@ public class GameManager : MonoBehaviour
         Debug.Log("GameManager: Start called. Resetting Time.timeScale to 1.");
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
         if (revivePanel != null) revivePanel.SetActive(false);
+        
+        if (lifeSystem == null) lifeSystem = FindFirstObjectByType<LifeSystem>();
+        
         Time.timeScale = 1f; // Game running
         AudioListener.pause = false; // Unmute all sounds
 
@@ -46,28 +53,29 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void GameOver()
+
+    public void OnPlayerEliminated()
     {
-        Debug.Log("GameManager: GameOver called.");
-        Time.timeScale = 0f; // PAUSE EVERYTHING
-        AudioListener.pause = true; // MUTE EVERYTHING
+        if (lifeSystem == null) lifeSystem = FindFirstObjectByType<LifeSystem>();
 
-        // Check for revivePanel
-        if (revivePanel != null)
+        if (lifeSystem != null)
         {
-            revivePanel.SetActive(true);
-            
-            if (countdownText == null)
-                countdownText = revivePanel.GetComponentInChildren<TextMeshProUGUI>();
-
-            if (countdownCoroutine != null) StopCoroutine(countdownCoroutine);
-            countdownCoroutine = StartCoroutine(StartReviveCountdown());
+            lifeSystem.OnPlayerOut();
         }
         else
         {
-            Debug.LogWarning("GameManager: revivePanel reference missing! Showing GameOver directly.");
+            Debug.LogError("GameManager: LifeSystem reference missing!");
             ShowActualGameOver();
         }
+    }
+
+    public void OnFinalLifeExhausted()
+    {
+        if (countdownText == null && revivePanel != null)
+            countdownText = revivePanel.GetComponentInChildren<TextMeshProUGUI>();
+
+        if (countdownCoroutine != null) StopCoroutine(countdownCoroutine);
+        countdownCoroutine = StartCoroutine(StartReviveCountdown());
     }
 
     private IEnumerator StartReviveCountdown()
@@ -78,7 +86,7 @@ public class GameManager : MonoBehaviour
             if (countdownText != null)
                 countdownText.text = countdown.ToString();
             
-            yield return new WaitForSecondsRealtime(1f); // Use Realtime since timeScale is 0
+            yield return new WaitForSecondsRealtime(1f);
             countdown--;
         }
 
@@ -98,48 +106,24 @@ public class GameManager : MonoBehaviour
                 InterstitialAdController.Instance.OnGameOver();
             }
         }
-        else
-        {
-            // Fallback: Try to find it
-            Debug.LogWarning("GameManager: gameOverPanel reference missing! Trying to find it...");
-            var panel = GameObject.Find("GameOverPanel");
-            if (panel != null)
-            {
-                panel.SetActive(true);
-                gameOverPanel = panel; // Cache it
-            }
-            else
-            {
-                Debug.LogError("GameManager: Could not find GameOverPanel object!");
-            }
-        }
     }
 
     public void OnWatchAdButtonClicked()
     {
-        Debug.Log("GameManager: OnWatchAdButtonClicked called");
-        // Stop the countdown while showing ad
         if (countdownCoroutine != null) StopCoroutine(countdownCoroutine);
         
-        // Call rewarded ad script
         if (RewardedAdController.Instance != null && RewardedAdController.Instance.IsRewardedAdReady())
         {
             RewardedAdController.Instance.ShowRewardedAd(() => 
             {
-                // On Reward Earned - Only revive after watching the ad
                 Revive();
             }, () => 
             {
-                // On Ad Closed (without reward or failed)
-                // Resume countdown or show game over
-                Debug.Log("Ad closed without reward or failed.");
                 ShowActualGameOver();
             });
         }
         else
         {
-            Debug.LogWarning("Rewarded Ad not ready!");
-            // Show game over if ad is not available
             ShowActualGameOver();
         }
     }
@@ -164,13 +148,14 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         AudioListener.pause = false;
 
-        // Reset player state
-        if (Player.Instance != null)
+        if (lifeSystem != null)
+        {
+            lifeSystem.ReviveFromAd();
+        }
+        else if (Player.Instance != null)
         {
             Player.Instance.RevivePlayer();
         }
-
-        Debug.Log("Player Revived!");
     }
 
     public void RestartGame()

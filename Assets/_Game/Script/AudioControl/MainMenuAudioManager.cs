@@ -13,22 +13,28 @@ public class MainMenuAudioManager : MonoBehaviour
     [Tooltip("Should the music loop?")]
     public bool loopMusic = true;
 
-    private AudioSource audioSource;
+    [Header("Internal References")]
+    public AudioSource audioSource;
 
     void Start()
     {
         // Check if we have an AudioSource, if not, add one
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
+        if (audioSource == null) audioSource = GetComponent<AudioSource>();
+        if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
 
-        PlayMusic();
+        // Sync with global sound setting
+        bool isSoundOn = PlayerPrefs.GetInt("IsSoundOn", 1) == 1;
+        if (isSoundOn)
+        {
+            PlayMusic();
+        }
     }
 
     public void PlayMusic()
     {
+        // Double check global setting
+        if (PlayerPrefs.GetInt("IsSoundOn", 1) == 0) return;
+
         if (menuMusic != null)
         {
             audioSource.clip = menuMusic;

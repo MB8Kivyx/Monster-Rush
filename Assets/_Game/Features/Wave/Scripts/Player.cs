@@ -15,15 +15,15 @@ public class Player : MonoBehaviour
     [SerializeField] private float horizontalSpeed;
     
     [Tooltip("Starting forward speed (Cruising speed).")]
-    [SerializeField] private float verticalSpeed = 12f;
+    [SerializeField] private float verticalSpeed = 10f;
     
     [Tooltip("Maximum limit for speed (Boosted speed).")]
     [SerializeField] private float maxVerticalSpeed = 22f;
 
-    [Tooltip("How fast it speeds up when holding (Target: ~1.5s to max).")]
-    [SerializeField] private float accelerationForce = 6.5f;
+    [Tooltip("How fast it speeds up when holding (Target: ~2s to max).")]
+    [SerializeField] private float accelerationForce = 5f;
     [Tooltip("How fast it slows down when released (Coasting).")]
-    [SerializeField] private float decelerationForce = 5f;
+    [SerializeField] private float decelerationForce = 4f;
 
     [Header("Visual Effects")]
     [Tooltip("Maximum tilt angle when turning.")]
@@ -113,6 +113,19 @@ public class Player : MonoBehaviour
     public float CurrentSpeed => currentVerticalSpeed;
     public float BaseSpeed => verticalSpeed;
     public float MaxSpeed => maxVerticalSpeed;
+
+    /// <summary>
+    /// Returns 0 to 1 based on current speed relative to base/max speed.
+    /// 0 = Idle/Base Speed, 1 = Max Speed.
+    /// </summary>
+    public float NormalizedSpeed
+    {
+        get
+        {
+            if (maxVerticalSpeed <= verticalSpeed) return 0f;
+            return Mathf.Clamp01((currentVerticalSpeed - verticalSpeed) / (maxVerticalSpeed - verticalSpeed));
+        }
+    }
 
     private void Update()
     {
@@ -240,25 +253,27 @@ public class Player : MonoBehaviour
 
     private void HandleDeath()
     {
+        if (isDead) return;
         isDead = true;
+
         GameObject fx = Instantiate(deathEffect, transform.position, Quaternion.identity);
         Destroy(fx, 0.5f);
         
         if (rb != null)
         {
             rb.linearVelocity = Vector2.zero;
-            rb.angularVelocity = 0f;
             rb.bodyType = RigidbodyType2D.Kinematic;
         }
 
+        // Trigger the LifeSystem via GameManager
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.GameOver();
+            GameManager.Instance.OnPlayerEliminated();
         }
         else
         {
             var gm = FindFirstObjectByType<GameManager>();
-            if (gm != null) gm.GameOver();
+            if (gm != null) gm.OnPlayerEliminated();
         }
 
         audioSource.PlayOneShot(deathClip, 1);
@@ -280,7 +295,6 @@ public class Player : MonoBehaviour
         if (playerCollider != null)
         {
             playerCollider.enabled = true;
-            // Set to Trigger during invincibility to prevent physical sticking
             playerCollider.isTrigger = true;
         }
 
@@ -288,13 +302,12 @@ public class Player : MonoBehaviour
         
         // RELOCATE SLIGHTLY FORWARD: Clear whatever we just hit
         Vector3 spawnPos = transform.position;
-        spawnPos.y += 3.0f; // Move 3 units forward
+        spawnPos.y += 3.0f;
         transform.position = spawnPos;
 
-        // Reset Lane target to current position to avoid immediate snapping
+        // Reset Lane target to current position
         targetX = transform.position.x;
 
-        // Start Invincibility
         StartCoroutine(ReviveInvincibility());
     }
 

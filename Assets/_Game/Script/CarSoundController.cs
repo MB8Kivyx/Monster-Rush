@@ -5,10 +5,9 @@ public class CarSoundController : MonoBehaviour
 {
     [Header("Audio Settings")]
     public AudioSource carAudioSource;
-    public AudioClip engineStartClip; // The "Vroom" start sound
-    public AudioClip engineLoopClip;  // The continuous "Hummm" sound (formerly carSoundClip)
+    public AudioClip engineClip; // Single engine sound (assign Jeep_sound or Sound 01 here)
 
-    [Header("Engine Settings")]
+    [Header("Engine Pitch/Volume Settings")]
     [Tooltip("Volume when NOT touching (Idle)")]
     [Range(0f, 1f)] public float idleVolume = 0.3f;
 
@@ -24,9 +23,15 @@ public class CarSoundController : MonoBehaviour
     [Tooltip("How fast the sound changes.")]
     public float fadeSpeed = 3.0f;
 
-    private bool isTouching = false;
-    private bool isLooping = false; // Check if we are in the loop phase
+    [Header("Global Setting")]
+    [Tooltip("Turn sound on/off globally. Syncs with PlayerPrefs.")]
+    public bool isSoundOn = true;
 
+    [Header("Engine State (Read-only)")]
+    public bool isLooping = false; 
+    public float currentNormalizedSpeed = 0f;
+
+    private bool wasPausedByTimeScale = false;
     public static CarSoundController Instance;
 
     private void Awake()
@@ -34,7 +39,9 @@ public class CarSoundController : MonoBehaviour
         if (Instance == null)
             Instance = this;
         else
-            Destroy(this);
+            Destroy(gameObject);
+
+        isSoundOn = PlayerPrefs.GetInt("IsSoundOn", 1) == 1;
     }
 
     void Start()
@@ -45,73 +52,62 @@ public class CarSoundController : MonoBehaviour
         if (carAudioSource == null)
             carAudioSource = gameObject.AddComponent<AudioSource>();
 
-        // SEAMLESS LOOPING IMPLEMENTATION
-        PlayPreciseEngineSequence();
-    }
+        carAudioSource.playOnAwake = false;
 
-    private void PlayPreciseEngineSequence()
-    {
-        if (engineStartClip != null)
+        if (isSoundOn)
         {
-            isLooping = false;
-            carAudioSource.loop = false;
-            carAudioSource.clip = engineStartClip;
-            carAudioSource.volume = 1f;
-            carAudioSource.pitch = 1f;
-            
-            double startTime = AudioSettings.dspTime + 0.1; // Small buffer for scheduling
-            carAudioSource.PlayScheduled(startTime);
-
-            if (engineLoopClip != null)
-            {
-                // Schedule the looping clip to start exactly when the start clip finishes
-                double duration = (double)engineStartClip.samples / engineStartClip.frequency;
-                double loopStartTime = startTime + duration;
-
-                // We use a coroutine to handle the switch in logic state (isLooping)
-                // but the audio itself is scheduled by the engine for zero gap.
-                StartCoroutine(TransitionToLoopState(loopStartTime));
-            }
-        }
-        else if (engineLoopClip != null)
-        {
-            StartLoopingImmediately();
+            StartEngineLoop();
         }
     }
 
-    private void StartLoopingImmediately()
+    private void StartEngineLoop()
     {
-        isLooping = true;
-        carAudioSource.loop = true;
-        carAudioSource.clip = engineLoopClip;
-        carAudioSource.Play();
-    }
-
-    private IEnumerator TransitionToLoopState(double loopStartTime)
-    {
-        // Wait until just before the loop starts to change the script's internal state
-        // This ensures pitch/volume modulation starts at the right time.
-        while (AudioSettings.dspTime < loopStartTime - 0.02)
+        if (engineClip != null)
         {
-            yield return null;
+            isLooping = true;
+            carAudioSource.loop = true;
+            carAudioSource.clip = engineClip;
+            carAudioSource.volume = idleVolume;
+            carAudioSource.pitch = idlePitch;
+            carAudioSource.Play();
         }
-
-        isLooping = true;
-        carAudioSource.loop = true;
-        carAudioSource.clip = engineLoopClip;
-        
-        // If it's the same AudioSource, we must call Play() or PlayScheduled() 
-        // to start the next clip. PlayScheduled is more precise.
-        carAudioSource.PlayScheduled(loopStartTime);
+        else
+        {
+            Debug.LogWarning("CarSoundController: No engineClip assigned in Inspector!");
+        }
     }
-
-    private bool wasPausedByTimeScale = false;
 
     void Update()
     {
         if (carAudioSource == null) return;
 
-        // 1. Handle Pause/Resume based on Time.timeScale
+        UpdateSoundToggleState();
+
+        if (HandlePauseState()) return;
+
+        if (isSoundOn)
+        {
+            SyncWithPlayerSpeed();
+            ApplyAudioModulation();
+        }
+    }
+
+    private void UpdateSoundToggleState()
+    {
+        // sync with the inspector/PlayerPrefs
+        if (isSoundOn && !carAudioSource.isPlaying && !wasPausedByTimeScale && Time.timeScale > 0)
+        {
+            if (isLooping) carAudioSource.Play();
+            else StartEngineLoop();
+        }
+        else if (!isSoundOn && carAudioSource.isPlaying)
+        {
+            carAudioSource.Stop();
+        }
+    }
+
+    private bool HandlePauseState()
+    {
         if (Time.timeScale == 0)
         {
             if (!wasPausedByTimeScale)
@@ -119,40 +115,50 @@ public class CarSoundController : MonoBehaviour
                 if (carAudioSource.isPlaying) carAudioSource.Pause();
                 wasPausedByTimeScale = true;
             }
-            return; // Skip pitch/volume updates while paused
+            return true; 
         }
         else if (wasPausedByTimeScale)
         {
-            carAudioSource.UnPause();
+            if (isSoundOn) carAudioSource.UnPause();
             wasPausedByTimeScale = false;
         }
+        return false;
+    }
 
-        // 2. Normal Input Handling
-        isTouching = Input.GetMouseButton(0);
-
-        // Only modulate engine sound if we are in the Looping phase
-        if (isLooping)
+    private void SyncWithPlayerSpeed()
+    {
+        if (Player.Instance != null)
         {
-            HandleEngineSound();
+            // The Player script now handles the gradual change of speed.
+            // We just follow that value.
+            currentNormalizedSpeed = Player.Instance.NormalizedSpeed;
+        }
+        else
+        {
+            // Fallback to input if Player instance is missing
+            float target = Input.GetMouseButton(0) ? 1f : 0f;
+            currentNormalizedSpeed = Mathf.MoveTowards(currentNormalizedSpeed, target, Time.deltaTime * 0.5f);
         }
     }
 
-    void HandleEngineSound()
+    private void ApplyAudioModulation()
     {
-        if (carAudioSource == null) return;
+        // Target values based on normalized speed
+        float targetVolume = Mathf.Lerp(idleVolume, revVolume, currentNormalizedSpeed);
+        float targetPitch = Mathf.Lerp(idlePitch, revPitch, currentNormalizedSpeed);
 
-        // Target Values
-        float targetVolume = isTouching ? revVolume : idleVolume;
-        float targetPitch = isTouching ? revPitch : idlePitch;
-
-        // Smoothly Interpolate (Lerp) towards target
+        // Smoothly interpolate audio changes (fadeSpeed acts as additional dampening for realism)
         carAudioSource.volume = Mathf.Lerp(carAudioSource.volume, targetVolume, Time.deltaTime * fadeSpeed);
         carAudioSource.pitch = Mathf.Lerp(carAudioSource.pitch, targetPitch, Time.deltaTime * fadeSpeed);
+    }
 
-        // Ensure it stays playing unless paused
-        if (!carAudioSource.isPlaying && carAudioSource.isActiveAndEnabled && !wasPausedByTimeScale)
-        {
-            carAudioSource.Play();
-        }
+    public void ToggleSoundExternally(bool isOn)
+    {
+        isSoundOn = isOn;
+        PlayerPrefs.SetInt("IsSoundOn", isOn ? 1 : 0);
+        PlayerPrefs.Save();
+        
+        if (!isOn) carAudioSource.Stop();
+        else if (!carAudioSource.isPlaying) StartEngineLoop();
     }
 }
