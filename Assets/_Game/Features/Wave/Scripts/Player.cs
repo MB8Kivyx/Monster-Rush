@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Player : MonoBehaviour
 {
@@ -53,9 +54,6 @@ public class Player : MonoBehaviour
     private float currentVerticalSpeed; 
 
     private Rigidbody2D rb;
-    private AudioSource audioSource;
-    [SerializeField] private AudioClip deathClip;
-    [SerializeField] private AudioClip itemClip;
     private Collider2D playerCollider;
 
     private void Awake()
@@ -71,7 +69,6 @@ public class Player : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        audioSource = GetComponent<AudioSource>();
         playerCollider = GetComponent<Collider2D>();
 
         if (gameManager != null)
@@ -232,7 +229,8 @@ public class Player : MonoBehaviour
             Destroy(fx, 0.5f);
             Destroy(other.transform.parent.gameObject);
             ScoreManager.Instance.IncrementScore();
-            audioSource.PlayOneShot(itemClip, 1);
+            if (CarSoundController.Instance != null)
+                CarSoundController.Instance.PlayItemSound();
         }
 
         if (other.CompareTag("Obstacle") && !isDead && !isInvincible)
@@ -254,10 +252,21 @@ public class Player : MonoBehaviour
     private void HandleDeath()
     {
         if (isDead) return;
+
+        // Play car crash sound immediately via centralized controller
+        if (CarSoundController.Instance != null)
+        {
+            CarSoundController.Instance.PlayCrashSound();
+        }
+        else
+        {
+            Debug.LogWarning("Player: CarSoundController.Instance missing!");
+        }
+
         isDead = true;
 
         GameObject fx = Instantiate(deathEffect, transform.position, Quaternion.identity);
-        Destroy(fx, 0.5f);
+        if (fx != null) Destroy(fx, 0.5f);
         
         if (rb != null)
         {
@@ -275,14 +284,14 @@ public class Player : MonoBehaviour
             var gm = FindFirstObjectByType<GameManager>();
             if (gm != null) gm.OnPlayerEliminated();
         }
-
-        audioSource.PlayOneShot(deathClip, 1);
     }
 
     public bool IsInvincible => isInvincible;
 
     public void RevivePlayer()
     {
+        // Set invincibility first to prevent immediate re-triggering
+        isInvincible = true;
         isDead = false;
         
         if (rb != null)
@@ -313,7 +322,7 @@ public class Player : MonoBehaviour
 
     private IEnumerator ReviveInvincibility()
     {
-        isInvincible = true;
+        // isInvincible is now set true in RevivePlayer
         
         // Visual indicator (flickering)
         SpriteRenderer sr = GetComponent<SpriteRenderer>();

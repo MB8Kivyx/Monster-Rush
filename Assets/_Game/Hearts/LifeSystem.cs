@@ -15,7 +15,6 @@ public class LifeSystem : MonoBehaviour
     [SerializeField] private Sprite unfilledHeartSprite;
     
     [Header("Professional Polish")]
-    [SerializeField] private AudioClip heartLostClip;
     [SerializeField] private float heartPulseScale = 1.3f;
     [SerializeField] private float heartPulseDuration = 0.3f;
 
@@ -45,15 +44,6 @@ public class LifeSystem : MonoBehaviour
             if (heartImages != null && currentLives < heartImages.Length)
             {
                 StartCoroutine(PulseHeart(heartImages[currentLives].gameObject));
-            }
-
-            // Play heart loss sound
-            if (heartLostClip != null)
-            {
-                if (Player.Instance != null && Player.Instance.GetComponent<AudioSource>() != null)
-                {
-                    Player.Instance.GetComponent<AudioSource>().PlayOneShot(heartLostClip);
-                }
             }
         }
 

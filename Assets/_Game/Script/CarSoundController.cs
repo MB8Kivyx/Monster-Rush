@@ -31,17 +31,38 @@ public class CarSoundController : MonoBehaviour
     public bool isLooping = false; 
     public float currentNormalizedSpeed = 0f;
 
+    [Header("SFX Logic")]
+    public AudioSource effectsAudioSource;
+    public AudioClip crashClip;
+    public AudioClip itemClip;
+
     private bool wasPausedByTimeScale = false;
     public static CarSoundController Instance;
 
     private void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+            // Optionally make persistent if needed
+            // DontDestroyOnLoad(gameObject);
+        }
         else
+        {
             Destroy(gameObject);
+            return;
+        }
 
         isSoundOn = PlayerPrefs.GetInt("IsSoundOn", 1) == 1;
+
+        // Initialize effects source if not assigned
+        if (effectsAudioSource == null)
+        {
+            effectsAudioSource = gameObject.AddComponent<AudioSource>();
+        }
+        effectsAudioSource.playOnAwake = false;
+        effectsAudioSource.loop = false;
+        effectsAudioSource.ignoreListenerPause = true; // Still plays during Game Pause
     }
 
     void Start()
@@ -58,6 +79,23 @@ public class CarSoundController : MonoBehaviour
         {
             StartEngineLoop();
         }
+    }
+
+    public void PlayCrashSound()
+    {
+        if (!isSoundOn || effectsAudioSource == null || crashClip == null) return;
+        
+        Debug.Log($"[CAR-AUDIO] Playing Crash SFX: {crashClip.name}");
+        effectsAudioSource.volume = 1f;
+        effectsAudioSource.pitch = 1f;
+        effectsAudioSource.PlayOneShot(crashClip, 1f);
+    }
+
+    public void PlayItemSound()
+    {
+        if (!isSoundOn || effectsAudioSource == null || itemClip == null) return;
+
+        effectsAudioSource.PlayOneShot(itemClip, 0.7f);
     }
 
     private void StartEngineLoop()
