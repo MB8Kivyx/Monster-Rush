@@ -44,6 +44,12 @@ public class Player : MonoBehaviour
     private bool isDead;
     private float mapWidth;
     
+    [Header("Collision Settings")]
+    [Tooltip("Distance the car slides back upon hitting an obstacle.")]
+    [SerializeField] private float impactSlideDistance = 2f;
+    [Tooltip("Duration of the backward slide.")]
+    [SerializeField] private float impactSlideDuration = 0.5f;
+    
     // THREE-TRACK MOVEMENT SYSTEM
     [Header("Three-Track System")]
     [SerializeField] private float horizontalMovementSmoothing = 0.08f;
@@ -63,8 +69,16 @@ public class Player : MonoBehaviour
     private Collider2D playerCollider;
     private Vector3 initialScale;
 
-    [Header("Components")]
-    [SerializeField] private TyreController tyreController;
+    [Header("Tyre System")]
+    [Tooltip("Assign your tyre objects here.")]
+    public Transform[] tyres;
+    [Tooltip("Base speed for tyre rotation.")]
+    [SerializeField] private float baseTyreRotationSpeed = 500f;
+    [Tooltip("Multiplier for how much car speed affects tyre spin.")]
+    [SerializeField] private float tyreSpeedMultiplier = 20f;
+
+
+
 
     private void Awake()
     {
@@ -115,9 +129,9 @@ public class Player : MonoBehaviour
         initialScale = transform.localScale;
 
         // Auto-find TyreController if missing
-        if (tyreController == null) tyreController = GetComponent<TyreController>();
+
         // If not on this object, check children
-        if (tyreController == null) tyreController = GetComponentInChildren<TyreController>();
+
     }
 
     private void OnDestroy()
@@ -160,6 +174,8 @@ public class Player : MonoBehaviour
             // Gradually return to base verticalSpeed
             currentVerticalSpeed = Mathf.MoveTowards(currentVerticalSpeed, verticalSpeed, decelerationForce * Time.deltaTime);
         }
+        
+        HandleTyreRotation();
     }
 
     private void HandleInput()
@@ -291,6 +307,9 @@ public class Player : MonoBehaviour
 
         isDead = true;
 
+        // Trigger recoil slide
+        StartCoroutine(ImpactSlideRoutine());
+
         GameObject fx = Instantiate(deathEffect, transform.position, Quaternion.identity);
         if (fx != null) Destroy(fx, 0.5f);
         
@@ -322,7 +341,7 @@ public class Player : MonoBehaviour
         
         if (rb != null)
         {
-            rb.bodyType = RigidbodyType2D.Dynamic;
+            rb.bodyType = RigidbodyType2D.Kinematic;
             rb.linearVelocity = Vector2.zero;
             rb.angularVelocity = 0f;
         }
@@ -335,19 +354,22 @@ public class Player : MonoBehaviour
 
         gameObject.SetActive(true);
         
-        // RELOCATE SLIGHTLY FORWARD & CENTER: Clear whatever we just hit and reset lane
+        gameObject.SetActive(true);
+        
+        // RELOCATE SLIGHTLY FORWARD: Clear whatever we just hit, but KEEP LANE
+        // Removed resetting of x and currentTrackIndex to preserve lane.
         Vector3 spawnPos = transform.position;
-        spawnPos.y += 3.0f;
-        spawnPos.x = 0f; // Force center alignment
+        spawnPos.y += 3.0f; 
+        // spawnPos.x = 0f; // REMOVED to preserve lane
         transform.position = spawnPos;
 
-        // Reset Lane target to Center
-        currentTrackIndex = 1;
-        targetX = 0f;
+        // Reset Lane target to Center -> REMOVED
+        // currentTrackIndex = 1;
+        // targetX = 0f;
 
         StartCoroutine(ReviveInvincibility());
         
-        if (tyreController != null) tyreController.StartRotation();
+
     }
 
     private IEnumerator ReviveInvincibility()
@@ -408,10 +430,7 @@ public class Player : MonoBehaviour
         }
 
         // Ensure tyres keep spinning unless we dictate otherwise (e.g. 0 lives)
-        if (currentLives > 0 && tyreController != null)
-        {
-            tyreController.StartRotation();
-        }
+
     }
 
     private void MatchSpriteSize(Sprite newSprite)
@@ -425,4 +444,72 @@ public class Player : MonoBehaviour
 
         transform.localScale = new Vector3(initialScale.x * ratioX, initialScale.y * ratioY, initialScale.z);
     }
+
+
+    private void HandleTyreRotation()
+    {
+        if (tyres == null || tyres.Length == 0) return;
+
+        // Calculate rotation speed based on vertical speed
+        // Base rotation + (Current Speed * Multiplier)
+        float currentRotSpeed = baseTyreRotationSpeed + (currentVerticalSpeed * tyreSpeedMultiplier);
+        
+        float rotationAmount = currentRotSpeed * Time.deltaTime;
+
+        foreach (Transform tyre in tyres)
+        {
+            if (tyre != null)
+            {
+                // Assuming tyres forward is Z or they rotate around X. 
+                // Standard for Unity 2D (if top down) is usually rotation around Z or X depending on setup.
+                // Based on previous script, it was Rotate(amount, 0, 0) [X axis]
+                tyre.Rotate(rotationAmount, 0, 0);
+            }
+        }
+    }
+
+    [ContextMenu("Auto Find Tyres")]
+    public void FindTyres()
+    {
+        var foundTyres = new System.Collections.Generic.List<Transform>();
+        FindTyresRecursively(transform, foundTyres);
+        tyres = foundTyres.ToArray();
+        Debug.Log($"[Player] Auto-found {tyres.Length} tyres.");
+    }
+
+    private void FindTyresRecursively(Transform parent, System.Collections.Generic.List<Transform> list)
+    {
+        foreach (Transform child in parent)
+        {
+            string n = child.name.ToLower();
+            if (n.Contains("wheel") || n.Contains("tyre") || n.Contains("tire"))
+            {
+                list.Add(child);
+            }
+            FindTyresRecursively(child, list);
+        }
+    }
+
+    private IEnumerator ImpactSlideRoutine()
+    {
+        float elapsed = 0f;
+        Vector3 startPos = transform.position;
+        Vector3 targetPos = startPos - new Vector3(0, impactSlideDistance, 0);
+
+        while (elapsed < impactSlideDuration)
+        {
+            // Simple EaseOut slide
+            float t = elapsed / impactSlideDuration;
+            t = Mathf.Sin(t * Mathf.PI * 0.5f); // EaseOutSine
+
+            // Only affect Y, keep X consistent with current lane (or where it was)
+            Vector3 newPos = Vector3.Lerp(startPos, targetPos, t);
+            newPos.x = transform.position.x; // Ensure X isn't chemically altered by Lerp if something weird happens (safety)
+            transform.position = newPos;
+
+            elapsed += Time.unscaledDeltaTime; // Use unscaled incase we pause timescale
+            yield return null;
+        }
+    }
 }
+
