@@ -1,16 +1,10 @@
 fileFormatVersion: 2
-guid: 55865f50ae4c8204387a138d8d1e12fb
+guid: 9e54b9973dda40e488a1cf00419dc553
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -155833793985202028
-    second: Car_crashed_2nd_time_0
-  - first:
-      213: 390949905269979385
-    second: Car_crashed_2nd_time_1
-  - first:
-      213: 5168049553874732926
-    second: Car_crashed_2nd_time_2
+      213: -6353788657775235111
+    second: Car_crashed_2nd_time (1)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -132,12 +126,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Car_crashed_2nd_time_0
+      name: Car_crashed_2nd_time (1)_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 166
+        width: 1099
         height: 1536
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -147,52 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 498b2817dfd56ddf0800000000000000
-      internalID: -155833793985202028
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Car_crashed_2nd_time_1
-      rect:
-        serializedVersion: 2
-        x: 170
-        y: 8
-        width: 757
-        height: 1470
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9f8f6941edeec6500800000000000000
-      internalID: 390949905269979385
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Car_crashed_2nd_time_2
-      rect:
-        serializedVersion: 2
-        x: 891
-        y: 0
-        width: 133
-        height: 1536
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e77c15010b998b740800000000000000
-      internalID: 5168049553874732926
+      spriteID: 9dfa66b21eec2d7a0800000000000000
+      internalID: -6353788657775235111
       vertices: []
       indices: 
       edges: []
@@ -211,9 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Car_crashed_2nd_time_0: -155833793985202028
-      Car_crashed_2nd_time_1: 390949905269979385
-      Car_crashed_2nd_time_2: 5168049553874732926
+      Car_crashed_2nd_time (1)_0: -6353788657775235111
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

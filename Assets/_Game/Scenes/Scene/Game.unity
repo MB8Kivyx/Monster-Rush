@@ -3437,7 +3437,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarSoundController
   carAudioSource: {fileID: 1864328887}
-  engineClip: {fileID: 8300000, guid: 1c33029e92e7a0249bbd918337d69185, type: 3}
+  engineClip: {fileID: 8300000, guid: c122a3e6a62cdcc418683ad486ad86f9, type: 3}
   idleVolume: 0.241
   revVolume: 0.921
   idlePitch: 0.73
@@ -5239,9 +5239,13 @@ MonoBehaviour:
     type: 3}
   colorChangeEffect: {fileID: 1627291491608086, guid: aee0cb9d4e7484ef78d4a6b547b5c955,
     type: 3}
+  normalSprite: {fileID: 21300000, guid: ecb6c859f4ddff540948c724475ccb55, type: 3}
+  damageStage1Sprite: {fileID: 21300000, guid: ab8bcf09ef253b84895d9e86d7a295f4, type: 3}
+  damageStage2Sprite: {fileID: 21300000, guid: 9e54b9973dda40e488a1cf00419dc553, type: 3}
   horizontalMovementSmoothing: 0.1
   swipeThreshold: 50
   laneWidth: 2
+  tyreController: {fileID: 0}
 --- !u!50 &1864328883
 Rigidbody2D:
   serializedVersion: 5
@@ -5488,7 +5492,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 0.64740324
+  MinDistance: 0.5123668
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 2
@@ -5675,11 +5679,11 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.03384304, y: 0.0118533075}
+  m_Offset: {x: 0.005873561, y: 0.011853337}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -5689,7 +5693,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.67001975, y: 1.3719432}
+  m_Size: {x: 0.89066756, y: 1.3719432}
   m_EdgeRadius: 0
 --- !u!114 &1864328889
 MonoBehaviour:

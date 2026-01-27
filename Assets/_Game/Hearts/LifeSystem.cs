@@ -28,6 +28,7 @@ public class LifeSystem : MonoBehaviour
     {
         currentLives = maxLives;
         UpdateHeartsUI();
+        if (Player.Instance != null) Player.Instance.UpdateDamageVisual(currentLives);
     }
 
     public void OnPlayerOut()
@@ -45,6 +46,9 @@ public class LifeSystem : MonoBehaviour
             {
                 StartCoroutine(PulseHeart(heartImages[currentLives].gameObject));
             }
+
+            // Update car damage visuals
+            if (Player.Instance != null) Player.Instance.UpdateDamageVisual(currentLives);
         }
 
         if (currentLives > 0)
@@ -55,7 +59,8 @@ public class LifeSystem : MonoBehaviour
         else
         {
             // 3rd elimination: Handle final death / Revive check
-            HandleFinalDeath();
+            // Start the sequence to wait for sound
+            StartCoroutine(HandleFinalDeathSequence());
         }
     }
 
@@ -111,14 +116,22 @@ public class LifeSystem : MonoBehaviour
         // AudioListener.pause = false; // Removed to allow sounds to play correctly
     }
 
-    private void HandleFinalDeath()
+    private IEnumerator HandleFinalDeathSequence()
     {
+        // Wait for crash sound to finish (approx 1.0 - 1.5 seconds)
+        // Adjust this value if your crash sound is longer/shorter
+        yield return new WaitForSeconds(1.2f);
+
         // Check ad availability
         bool adReady = RewardedAdController.Instance != null && RewardedAdController.Instance.IsRewardedAdReady();
 
         Time.timeScale = 0f;
-        // AudioListener.pause = true; // Removed so the crash sound can still play even when game is paused/revive panel shown.
-        // CarSoundController.Instance.effectsAudioSource.ignoreListenerPause is already true, but this global pause was muting everything.
+        
+        // Stop car sound immediately on game over
+        if (CarSoundController.Instance != null)
+        {
+            CarSoundController.Instance.SetGameOver(true);
+        }
 
         if (adReady && revivePanel != null)
         {
@@ -147,6 +160,14 @@ public class LifeSystem : MonoBehaviour
     {
         currentLives = 1;
         UpdateHeartsUI();
+        if (Player.Instance != null) Player.Instance.UpdateDamageVisual(currentLives);
+
+        // Resume car sound logic
+        if (CarSoundController.Instance != null)
+        {
+            CarSoundController.Instance.SetGameOver(false);
+        }
+
         if (revivePanel != null) revivePanel.SetActive(false);
         
         if (Player.Instance != null)

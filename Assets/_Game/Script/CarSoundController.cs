@@ -1,3 +1,5 @@
+
+
 using System.Collections;
 using UnityEngine;
 
@@ -25,7 +27,7 @@ public class CarSoundController : MonoBehaviour
 
     [Header("Global Setting")]
     [Tooltip("Turn sound on/off globally. Syncs with PlayerPrefs.")]
-    public bool isSoundOn = true;
+    public bool isSoundOn = true; 
 
     [Header("Engine State (Read-only)")]
     public bool isLooping = false; 
@@ -37,6 +39,7 @@ public class CarSoundController : MonoBehaviour
     public AudioClip itemClip;
 
     private bool wasPausedByTimeScale = false;
+    private bool isGameOver = false; // New flag to track game state
     public static CarSoundController Instance;
 
     private void Awake()
@@ -118,6 +121,13 @@ public class CarSoundController : MonoBehaviour
     void Update()
     {
         if (carAudioSource == null) return;
+        
+        // If game is over, ensure complete silence and do nothing else
+        if (isGameOver)
+        {
+            if (carAudioSource.isPlaying) carAudioSource.Stop();
+            return;
+        }
 
         UpdateSoundToggleState();
 
@@ -198,5 +208,14 @@ public class CarSoundController : MonoBehaviour
         
         if (!isOn) carAudioSource.Stop();
         else if (!carAudioSource.isPlaying) StartEngineLoop();
+    }
+
+    public void SetGameOver(bool state)
+    {
+        isGameOver = state;
+        if (isGameOver && carAudioSource != null && carAudioSource.isPlaying)
+        {
+            carAudioSource.Stop();
+        }
     }
 }

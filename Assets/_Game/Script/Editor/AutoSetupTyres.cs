@@ -21,11 +21,11 @@ public class AutoSetupTyres
 
         if (player != null)
         {
-            TyreRotation script = player.GetComponent<TyreRotation>();
+            TyreController script = player.GetComponent<TyreController>();
             if (script == null)
             {
-                script = player.AddComponent<TyreRotation>();
-                Debug.Log($"<color=cyan>[Antigravity Setup]: Attached 'TyreRotation' to object '{player.name}' successfully!</color>");
+                script = player.AddComponent<TyreController>();
+                Debug.Log($"<color=cyan>[Antigravity Setup]: Attached 'TyreController' to object '{player.name}' successfully!</color>");
             }
             
             // NOTE: We rely on the Runtime Auto-Discovery we added to TyreRotation.cs earlier

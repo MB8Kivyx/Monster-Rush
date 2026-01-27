@@ -35,6 +35,12 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject deathEffect;
     [SerializeField] private GameObject colorChangeEffect;
 
+    [Header("Damage Visuals")]
+    [SerializeField] private Sprite normalSprite;
+    [SerializeField] private Sprite damageStage1Sprite;
+    [SerializeField] private Sprite damageStage2Sprite;
+
+    private SpriteRenderer spriteRenderer;
     private bool isDead;
     private float mapWidth;
     
@@ -55,6 +61,10 @@ public class Player : MonoBehaviour
 
     private Rigidbody2D rb;
     private Collider2D playerCollider;
+    private Vector3 initialScale;
+
+    [Header("Components")]
+    [SerializeField] private TyreController tyreController;
 
     private void Awake()
     {
@@ -75,6 +85,8 @@ public class Player : MonoBehaviour
         {
             displayManagerComponent = gameManager.GetComponent<DisplayManager>();
         }
+        
+        spriteRenderer = GetComponent<SpriteRenderer>();
         
         if (displayManagerComponent == null)
         {
@@ -99,6 +111,13 @@ public class Player : MonoBehaviour
         currentVerticalSpeed = verticalSpeed; 
         
         if (rb != null) rb.bodyType = RigidbodyType2D.Kinematic;
+        
+        initialScale = transform.localScale;
+
+        // Auto-find TyreController if missing
+        if (tyreController == null) tyreController = GetComponent<TyreController>();
+        // If not on this object, check children
+        if (tyreController == null) tyreController = GetComponentInChildren<TyreController>();
     }
 
     private void OnDestroy()
@@ -223,12 +242,19 @@ public class Player : MonoBehaviour
         // Combined logic from PlayerCollision.cs
         if (isInvincible && other.CompareTag("Obstacle")) return;
 
-        if (other.CompareTag("Item_ColorChange"))
+        if (other.CompareTag("Item_ColorChange") || other.CompareTag("Coin") || other.CompareTag("Item"))
         {
-            GameObject fx = Instantiate(colorChangeEffect, other.transform.position, Quaternion.identity);
-            Destroy(fx, 0.5f);
-            Destroy(other.transform.parent.gameObject);
-            ScoreManager.Instance.IncrementScore();
+            // Check for specific effects if needed, otherwise just score
+            if (other.CompareTag("Item_ColorChange"))
+            {
+                GameObject fx = Instantiate(colorChangeEffect, other.transform.position, Quaternion.identity);
+                Destroy(fx, 0.5f);
+            }
+
+            Destroy(other.transform.parent != null ? other.transform.parent.gameObject : other.gameObject);
+            
+            if (ScoreManager.Instance != null) ScoreManager.Instance.IncrementScore();
+            
             if (CarSoundController.Instance != null)
                 CarSoundController.Instance.PlayItemSound();
         }
@@ -309,15 +335,19 @@ public class Player : MonoBehaviour
 
         gameObject.SetActive(true);
         
-        // RELOCATE SLIGHTLY FORWARD: Clear whatever we just hit
+        // RELOCATE SLIGHTLY FORWARD & CENTER: Clear whatever we just hit and reset lane
         Vector3 spawnPos = transform.position;
         spawnPos.y += 3.0f;
+        spawnPos.x = 0f; // Force center alignment
         transform.position = spawnPos;
 
-        // Reset Lane target to current position
-        targetX = transform.position.x;
+        // Reset Lane target to Center
+        currentTrackIndex = 1;
+        targetX = 0f;
 
         StartCoroutine(ReviveInvincibility());
+        
+        if (tyreController != null) tyreController.StartRotation();
     }
 
     private IEnumerator ReviveInvincibility()
@@ -343,5 +373,56 @@ public class Player : MonoBehaviour
         }
 
         isInvincible = false;
+    }
+
+    /// <summary>
+    /// Updates the car's visual appearance based on remaining lives.
+    /// Expected progression: 3 lives (Normal), 2 lives (Stage 1), 1 life (Stage 2).
+    /// </summary>
+    public void UpdateDamageVisual(int currentLives)
+    {
+        if (spriteRenderer == null) return;
+
+        Sprite targetSprite = null;
+
+        switch (currentLives)
+        {
+            case 3:
+                targetSprite = normalSprite;
+                break;
+            case 2:
+                targetSprite = damageStage1Sprite;
+                break;
+            case 1:
+                targetSprite = damageStage2Sprite;
+                break;
+            default:
+                if (currentLives <= 0) targetSprite = damageStage2Sprite;
+                break;
+        }
+
+        if (targetSprite != null)
+        {
+            spriteRenderer.sprite = targetSprite;
+            MatchSpriteSize(targetSprite);
+        }
+
+        // Ensure tyres keep spinning unless we dictate otherwise (e.g. 0 lives)
+        if (currentLives > 0 && tyreController != null)
+        {
+            tyreController.StartRotation();
+        }
+    }
+
+    private void MatchSpriteSize(Sprite newSprite)
+    {
+        if (newSprite == null || normalSprite == null) return;
+
+        // Calculate the ratio of the normal sprite's size to the new sprite's size
+        // This ensures the new sprite occupies the same amount of world space as the original
+        float ratioX = normalSprite.bounds.size.x / newSprite.bounds.size.x;
+        float ratioY = normalSprite.bounds.size.y / newSprite.bounds.size.y;
+
+        transform.localScale = new Vector3(initialScale.x * ratioX, initialScale.y * ratioY, initialScale.z);
     }
 }
