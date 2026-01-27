@@ -108,7 +108,7 @@ public class LifeSystem : MonoBehaviour
         
         isHandlingDeath = false;
         Time.timeScale = 1f;
-        AudioListener.pause = false;
+        // AudioListener.pause = false; // Removed to allow sounds to play correctly
     }
 
     private void HandleFinalDeath()
@@ -117,7 +117,8 @@ public class LifeSystem : MonoBehaviour
         bool adReady = RewardedAdController.Instance != null && RewardedAdController.Instance.IsRewardedAdReady();
 
         Time.timeScale = 0f;
-        AudioListener.pause = true;
+        // AudioListener.pause = true; // Removed so the crash sound can still play even when game is paused/revive panel shown.
+        // CarSoundController.Instance.effectsAudioSource.ignoreListenerPause is already true, but this global pause was muting everything.
 
         if (adReady && revivePanel != null)
         {
@@ -154,7 +155,7 @@ public class LifeSystem : MonoBehaviour
         }
         
         Time.timeScale = 1f;
-        AudioListener.pause = false;
+        // AudioListener.pause = false;
         isHandlingDeath = false;
     }
 }
