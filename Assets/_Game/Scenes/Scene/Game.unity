@@ -3311,14 +3311,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1467470429}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62f524069a98a3742a7d083741a7de23, type: 3}
+  m_Script: {fileID: 11500000, guid: 4ef34c0e05564eb8abc1f53d1436c301, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TyreRotation
-  frontLeftTyre: {fileID: 1993043532}
-  frontRightTyre: {fileID: 50503951}
-  backLeftTyre: {fileID: 2061718141}
-  backRightTyre: {fileID: 814662771}
-  rotationSpeed: 300
+  speed: 40
 --- !u!4 &1467470431
 Transform:
   m_ObjectHideFlags: 0
@@ -5242,10 +5238,21 @@ MonoBehaviour:
   normalSprite: {fileID: 21300000, guid: ecb6c859f4ddff540948c724475ccb55, type: 3}
   damageStage1Sprite: {fileID: 21300000, guid: ab8bcf09ef253b84895d9e86d7a295f4, type: 3}
   damageStage2Sprite: {fileID: 21300000, guid: 9e54b9973dda40e488a1cf00419dc553, type: 3}
+  normalVisual: {fileID: 0}
+  crashedVisual: {fileID: 0}
+  spriteRenderer: {fileID: 0}
+  impactSlideDistance: 2
+  impactSlideDuration: 0.5
   horizontalMovementSmoothing: 0.1
   swipeThreshold: 50
   laneWidth: 2
-  tyreController: {fileID: 0}
+  tyres:
+  - {fileID: 50503951}
+  - {fileID: 2061718141}
+  - {fileID: 1993043532}
+  - {fileID: 814662771}
+  baseTyreRotationSpeed: 500
+  tyreSpeedMultiplier: 20
 --- !u!50 &1864328883
 Rigidbody2D:
   serializedVersion: 5
