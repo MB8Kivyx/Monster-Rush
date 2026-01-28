@@ -36,11 +36,17 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject colorChangeEffect;
 
     [Header("Damage Visuals")]
-    [SerializeField] private Sprite normalSprite;
-    [SerializeField] private Sprite damageStage1Sprite;
-    [SerializeField] private Sprite damageStage2Sprite;
-
-    private SpriteRenderer spriteRenderer;
+    public Sprite normalSprite;
+    public Sprite damageStage1Sprite;
+    public Sprite damageStage2Sprite;
+    
+    [Header("Automated Visual Management")]
+    [Tooltip("Assign the GameObject for normal driving. If left empty, I will try to find a child named 'Normal'.")]
+    public GameObject normalVisual;
+    [Tooltip("Assign the GameObject for crash state. If left empty, I will try to find a child named 'Crashed'.")]
+    public GameObject crashedVisual;
+    
+    public SpriteRenderer spriteRenderer;
     private bool isDead;
     private float mapWidth;
     
@@ -67,7 +73,7 @@ public class Player : MonoBehaviour
 
     private Rigidbody2D rb;
     private Collider2D playerCollider;
-    private Vector3 initialScale;
+    private Vector2 normalSpriteSize; // To keep world-size consistent
 
     [Header("Tyre System")]
     [Tooltip("Assign your tyre objects here.")]
@@ -77,9 +83,6 @@ public class Player : MonoBehaviour
     [Tooltip("Multiplier for how much car speed affects tyre spin.")]
     [SerializeField] private float tyreSpeedMultiplier = 20f;
 
-
-
-
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -88,19 +91,26 @@ public class Player : MonoBehaviour
             return;
         }
         Instance = this;
+
+        rb = GetComponent<Rigidbody2D>();
+        playerCollider = GetComponent<Collider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (normalSprite != null) normalSpriteSize = normalSprite.bounds.size;
+
+        // 1. Setup the dual-visual hierarchy automatically
+        SetupAutomatedVisuals();
+
+        // 2. Initial state
+        UpdateDamageVisual(3);
     }
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        playerCollider = GetComponent<Collider2D>();
-
         if (gameManager != null)
         {
             displayManagerComponent = gameManager.GetComponent<DisplayManager>();
         }
-        
-        spriteRenderer = GetComponent<SpriteRenderer>();
         
         if (displayManagerComponent == null)
         {
@@ -125,13 +135,6 @@ public class Player : MonoBehaviour
         currentVerticalSpeed = verticalSpeed; 
         
         if (rb != null) rb.bodyType = RigidbodyType2D.Kinematic;
-        
-        initialScale = transform.localScale;
-
-        // Auto-find TyreController if missing
-
-        // If not on this object, check children
-
     }
 
     private void OnDestroy()
@@ -159,6 +162,9 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        // Tyres should always rotate (even when crashed)
+        HandleTyreRotation();
+        
         if (isDead) return;
 
         HandleInput();
@@ -174,8 +180,6 @@ public class Player : MonoBehaviour
             // Gradually return to base verticalSpeed
             currentVerticalSpeed = Mathf.MoveTowards(currentVerticalSpeed, verticalSpeed, decelerationForce * Time.deltaTime);
         }
-        
-        HandleTyreRotation();
     }
 
     private void HandleInput()
@@ -307,6 +311,9 @@ public class Player : MonoBehaviour
 
         isDead = true;
 
+        // Visual swap: Show crashed object
+        UpdateDamageVisual(1);
+
         // Trigger recoil slide
         StartCoroutine(ImpactSlideRoutine());
 
@@ -339,6 +346,9 @@ public class Player : MonoBehaviour
         isInvincible = true;
         isDead = false;
         
+        // Visual swap: Show normal object
+        UpdateDamageVisual(3);
+        
         if (rb != null)
         {
             rb.bodyType = RigidbodyType2D.Kinematic;
@@ -354,18 +364,15 @@ public class Player : MonoBehaviour
 
         gameObject.SetActive(true);
         
-        gameObject.SetActive(true);
-        
-        // RELOCATE SLIGHTLY FORWARD: Clear whatever we just hit, but KEEP LANE
-        // Removed resetting of x and currentTrackIndex to preserve lane.
+        // RELOCATE SLIGHTLY FORWARD & CENTER: Clear whatever we just hit and reset lane
         Vector3 spawnPos = transform.position;
         spawnPos.y += 3.0f; 
-        // spawnPos.x = 0f; // REMOVED to preserve lane
+        spawnPos.x = 0f; // Force center alignment
         transform.position = spawnPos;
 
-        // Reset Lane target to Center -> REMOVED
-        // currentTrackIndex = 1;
-        // targetX = 0f;
+        // Reset Lane target to Center
+        currentTrackIndex = 1;
+        targetX = 0f;
 
         StartCoroutine(ReviveInvincibility());
         
@@ -377,16 +384,23 @@ public class Player : MonoBehaviour
         // isInvincible is now set true in RevivePlayer
         
         // Visual indicator (flickering)
-        SpriteRenderer sr = GetComponent<SpriteRenderer>();
         float timer = 4f; // 4 seconds invincibility
         while (timer > 0)
         {
-            if (sr != null) sr.enabled = !sr.enabled;
+            // Toggle all active renderers in children
+            foreach (var sr in GetComponentsInChildren<SpriteRenderer>())
+            {
+                if (sr != null) sr.enabled = !sr.enabled;
+            }
             yield return new WaitForSeconds(0.1f);
             timer -= 0.1f;
         }
         
-        if (sr != null) sr.enabled = true;
+        // Ensure all renderers are back on
+        foreach (var sr in GetComponentsInChildren<SpriteRenderer>())
+        {
+            if (sr != null) sr.enabled = true;
+        }
         
         // Reset Collider to physical state
         if (playerCollider != null)
@@ -399,52 +413,113 @@ public class Player : MonoBehaviour
 
     /// <summary>
     /// Updates the car's visual appearance based on remaining lives.
-    /// Expected progression: 3 lives (Normal), 2 lives (Stage 1), 1 life (Stage 2).
+    /// Toggles objects and automatically syncs their scales to match the original car size.
     /// </summary>
     public void UpdateDamageVisual(int currentLives)
     {
-        if (spriteRenderer == null) return;
-
         Sprite targetSprite = null;
+        GameObject activeObj = null;
 
         switch (currentLives)
         {
             case 3:
                 targetSprite = normalSprite;
+                activeObj = normalVisual;
                 break;
             case 2:
                 targetSprite = damageStage1Sprite;
+                activeObj = normalVisual;
                 break;
             case 1:
-                targetSprite = damageStage2Sprite;
-                break;
+            case 0:
             default:
-                if (currentLives <= 0) targetSprite = damageStage2Sprite;
+                targetSprite = damageStage2Sprite;
+                activeObj = crashedVisual;
                 break;
         }
 
-        if (targetSprite != null)
+        // Toggle visibility
+        if (normalVisual != null) normalVisual.SetActive(activeObj == normalVisual);
+        if (crashedVisual != null) crashedVisual.SetActive(activeObj == crashedVisual);
+
+        // Apply sprite and sync scale to prevent "Giant Car" or "Mini Car" issues
+        if (activeObj != null && targetSprite != null)
         {
-            spriteRenderer.sprite = targetSprite;
-            MatchSpriteSize(targetSprite);
+            SpriteRenderer sr = activeObj.GetComponentInChildren<SpriteRenderer>();
+            if (sr != null)
+            {
+                sr.sprite = targetSprite;
+                SyncVisualScale(activeObj, targetSprite);
+            }
         }
 
-        // Ensure tyres keep spinning unless we dictate otherwise (e.g. 0 lives)
+        // Refresh tyre references for the currently active visual
+        FindTyresInActiveVisual(activeObj);
 
+        Debug.Log($"[Player] Auto-Visual Swap: {(activeObj != null ? activeObj.name : "None")} with {targetSprite?.name}");
     }
 
-    private void MatchSpriteSize(Sprite newSprite)
+    private void SetupAutomatedVisuals()
     {
-        if (newSprite == null || normalSprite == null) return;
+        // Auto-assign from naming convention if empty
+        if (normalVisual == null) normalVisual = transform.Find("Normal")?.gameObject;
+        if (crashedVisual == null) crashedVisual = transform.Find("Crashed")?.gameObject;
 
-        // Calculate the ratio of the normal sprite's size to the new sprite's size
-        // This ensures the new sprite occupies the same amount of world space as the original
-        float ratioX = normalSprite.bounds.size.x / newSprite.bounds.size.x;
-        float ratioY = normalSprite.bounds.size.y / newSprite.bounds.size.y;
-
-        transform.localScale = new Vector3(initialScale.x * ratioX, initialScale.y * ratioY, initialScale.z);
+        // Fallback: If user has a flat structure, we'll suggest setup
+        if (normalVisual == null || crashedVisual == null)
+        {
+            Debug.LogWarning("[Player] Dual-visual system needs child GameObjects named 'Normal' and 'Crashed'. Please organize your hierarchy for best results.");
+        }
+        
+        // Ensure starting scales are clean
+        if (normalVisual != null) normalVisual.transform.localScale = Vector3.one;
+        if (crashedVisual != null) crashedVisual.transform.localScale = Vector3.one;
     }
 
+    private void SyncVisualScale(GameObject visualObj, Sprite currentSprite)
+    {
+        if (currentSprite == null || normalSprite == null) return;
+
+        // Calculate the ratio to keep the world-size identical to the normal sprite
+        float ratioX = normalSpriteSize.x / currentSprite.bounds.size.x;
+        float ratioY = normalSpriteSize.y / currentSprite.bounds.size.y;
+
+        // Apply this ONLY to the child visual object
+        visualObj.transform.localScale = new Vector3(ratioX, ratioY, 1f);
+    }
+
+    private void FindTyresInActiveVisual(GameObject activeObj)
+    {
+        // PRIORITIZE MANUAL ASSIGNMENT:
+        // If the user has already assigned tyres in the Inspector, don't overwrite them.
+        if (tyres != null && tyres.Length > 0)
+        {
+            Debug.Log("[Player] Using manual tyre assignments from Inspector.");
+            return;
+        }
+
+        var foundTyres = new System.Collections.Generic.List<Transform>();
+        
+        // 1. Search in active visual specifically (Preferred)
+        if (activeObj != null)
+        {
+            FindTyresRecursively(activeObj.transform, foundTyres);
+        }
+        
+        // 2. Fallback: If no tyres in the visual (like a simple crash sprite), 
+        // search the entire player object so we don't lose the rotation logic.
+        if (foundTyres.Count == 0)
+        {
+            FindTyresRecursively(transform, foundTyres);
+        }
+        
+        tyres = foundTyres.ToArray();
+        
+        if (tyres.Length > 0) 
+            Debug.Log($"[Player] Automated Setup: {tyres.Length} tyres found for rotation.");
+    }
+
+    
 
     private void HandleTyreRotation()
     {
