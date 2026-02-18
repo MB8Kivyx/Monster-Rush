@@ -1,10 +1,10 @@
 # ninja log v5
-10	4189	1768378601659410904	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	9382849b877516
-5	4205	1768378601677363121	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	12f3b113b3e3f893
-1	4393	1768378601867810813	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	e5a6d8daf185544f
-12	4424	1768378601879995758	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	f0a8775321b4fea
-3	4702	1768378602176442412	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	f51f886eab3e635e
-17	4950	1768378602425123995	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	cee6bde4ea183c9d
-7	5383	1768378602856289936	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	32606a3f9b772ed6
-0	5759	1768378603236074249	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	62d0dbb7fbbbc4fb
-5760	6000	1768378603483708429	/Users/jawad/Desktop/DarkStar Studios/Monster-Rush/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/3z2e3iy3/obj/arm64-v8a/libgame.so	14d6c3f1808bbc7b
+7	3504	1771392722031852441	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	1e56781ac96d4a83
+4	3519	1771392722050916451	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	eab74f869fdc4095
+2	3586	1771392722119397001	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	ce848caa123871b9
+9	3623	1771392722156717899	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	8390eb6935291ed6
+3	3735	1771392722266352491	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	dc0fe3b62c678eb4
+10	3882	1771392722415373790	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	182ee0119c84f19d
+6	4226	1771392722759059423	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	5ba001780596b75b
+0	4466	1771392722997740335	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	2d866af10fa5bda0
+4466	4632	1771392723170990425	/Users/jawad/Desktop/DarkStar Studios/Monster-Rush/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/3z2e3iy3/obj/arm64-v8a/libgame.so	9c4709fe0c538f20

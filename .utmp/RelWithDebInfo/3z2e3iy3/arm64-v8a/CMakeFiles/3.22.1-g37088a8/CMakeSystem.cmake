@@ -3,7 +3,7 @@ set(CMAKE_HOST_SYSTEM_NAME "Darwin")
 set(CMAKE_HOST_SYSTEM_VERSION "24.6.0")
 set(CMAKE_HOST_SYSTEM_PROCESSOR "x86_64")
 
-include("/Applications/Unity/Hub/Editor/6000.3.3f1/PlaybackEngines/AndroidPlayer/NDK/build/cmake/android.toolchain.cmake")
+include("/Applications/Unity/Hub/Editor/6000.3.4f1/PlaybackEngines/AndroidPlayer/SDK/ndk/27.2.12479018/build/cmake/android.toolchain.cmake")
 
 set(CMAKE_SYSTEM "Android-1")
 set(CMAKE_SYSTEM_NAME "Android")
